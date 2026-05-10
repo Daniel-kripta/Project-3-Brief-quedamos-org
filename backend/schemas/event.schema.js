@@ -7,6 +7,7 @@ const createEventSchema = z.object({
   location: z.string().min(3),
   area: z.string().min(3),
   maxCapacity: z.number().int().positive(),
+  imageUrl: z.string().url().optional(),
   categoryId: z.number().int().positive()
 })
 

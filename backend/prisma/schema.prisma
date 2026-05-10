@@ -39,6 +39,7 @@ model Event {
   location    String
   area        String
   maxCapacity Int
+  imageUrl    String?
   categoryId  Int
   organizerId Int
   createdAt   DateTime @default(now())
