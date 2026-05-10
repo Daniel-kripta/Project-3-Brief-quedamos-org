@@ -7,5 +7,17 @@ Este proyecto representa la culminación técnica del aprendizaje en el bootcamp
 
 Periodo de desarrollo: Del 9 de mayo al 18 de mayo de 2026.
 
+## 2. Estructura de base de datos
+
+### Roles (MVP)
+
+El sistema de roles es **único por persona**: al registrarse, cada persona elige entre `USER`, `ORGANIZER` o `ADMIN`. No es posible acumular roles.
+
+Esto es una limitación consciente del MVP. Una persona que quiera organizar eventos debe registrarse como `ORGANIZER`, aunque también pueda apuntarse a eventos de otras personas organizadoras.
+
+El escenario de una persona que es a la vez participante habitual y organizadora ocasional queda pendiente para la **Fase 2**, donde se migraría el campo `role` a una relación many-to-many con una tabla `roles`. Prisma gestionaría esa migración sin necesidad de rehacer la estructura base.
+
+---
+
 ## 1. Mi proyecto: quedamos.org
-MPV: Este proyecto consiste en el desarrollo de una plataforma web integral diseñada para centralizar la gestión de eventos y fomentar el encuentro social físico en Canarias. El sistema permite a las personas usuarias descubrir actividades locales, filtrar su búsqueda por municipios específicos y gestionar su asistencia a través de un entorno seguro que prioriza la privacidad y la protección comunitaria. Al mismo tiempo facilita a las entidades a ampliar el alcance de sus actividades y llevar más control sobre el aforo y perfil de asistencia. Para información más completa sobre el proyecto social ver: QuedamosOrg.md .
+MPV: Este proyecto consiste en el desarrollo de una plataforma web integral diseñada para centralizar la gestión de eventos y fomentar el encuentro social físico en Canarias. El proyecto se enmarca dentro de un proyecto social y corresponde a su primera fase: MVP. El sistema permite a las personas usuarias descubrir actividades locales, filtrar su búsqueda por municipios específicos y gestionar su asistencia a través de un entorno seguro que prioriza la privacidad y la protección comunitaria. Al mismo tiempo facilita a las entidades a ampliar el alcance de sus actividades y llevar más control sobre el aforo y perfil de asistencia.
