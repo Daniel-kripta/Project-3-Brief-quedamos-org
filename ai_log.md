@@ -30,7 +30,6 @@
   - Entendí la diferencia entre `select` (campos de la misma tabla) e `include` (tablas relacionadas) en Prisma.
   - Entendí que `@@unique([userId, eventId])` es una restricción de tabla, no de campo, y que previene inscripciones duplicadas devolviendo P2002.
   - Entendí que `module.exports = valor` y `module.exports = { clave: valor }` son distintos y que las llaves en el `require` dependen de eso.
-  - Sigo sin tener del todo claro cuándo una arrow function necesita llaves y cuándo no en contextos complejos (funciones que devuelven funciones como `validate`).
 
 ---
 
@@ -54,4 +53,19 @@
   - Entendí que `_` se usa para indicar que esa variable la declaro pero no la voy a usar, y evitar que salte el error.
   - Entendí por qué hay que borrar las asistencias antes de borrar un evento: PostgreSQL rechaza borrar el padre si hay hijos con clave foránea apuntando a él.
   - Entendí que Prisma genera automáticamente el nombre `userId_eventId` para el `@@unique` compuesto y que se usa como identificador en `delete`.
-  - Sigo sin tener completamente claro el patrón de cuándo usar `include` con `select` anidado vs `include: true`.
+
+---
+
+## 2026-05-11 — Preparación Día 3: Postman + ajustes backend
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Sesión de preparación antes de las tareas principales del Día 3. Sin codificación de nuevas funcionalidades.
+- **Cómo se usó:** Claude guió la configuración de Postman y por otro lado, revisó el feedback de una herramienta externa (Gemini) contrastándolo con el código real.
+- **Qué obtuve:** Conocimientos en Postman para completar con todas las rutas actuales usando entorno con captura automática de token. A partir de las pruebas en Postman localicé un fallo de diseño y se corrigió en `getMyAttendances`.
+- **Qué modifiqué o descarté:**
+  - Del Feedback de Gemini dos observaciones menores resultaron válidas: validación de NaN en IDs de ruta (evitar inyección de código), logging en el catch del webhook.
+  - `getMyAttendances` corregido para incluir `include: { event: true }` — sin esto devolvía solo los IDs en lugar de los datos completos del evento.
+- **Tiempo con IA:** 90 min | **Tiempo sin IA (estimado):** incierta, (tarea no pre-programada)
+- **Aprendizaje:**
+  - Entendí cómo funcionan las variables de entorno en Postman: el script `pm.environment.set("token", ...)` en el Login captura el token automáticamente y lo propaga al resto de requests mediante `{{token}}`.
+  - Descubrí que Prisma Studio es una maravilla.

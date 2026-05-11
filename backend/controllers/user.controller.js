@@ -2,7 +2,10 @@ const prisma = require("../lib/prisma")
 
 const getMyAttendances = async (req, res, next) => {
     try{
-    const attendances = await prisma.attendance.findMany( { where: { userId: req.user.id } })
+    const attendances = await prisma.attendance.findMany( { 
+        where: { userId: req.user.id},
+        include: {event: true}
+          })
     res.json(attendances)
     } catch (err) {
     next(err)
