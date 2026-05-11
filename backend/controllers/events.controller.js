@@ -1,4 +1,6 @@
 const prisma = require("../lib/prisma")
+const nodemailer = require('nodemailer')
+
 
 const getEvents = async (req, res, next) => {
     const {area, categoryId, from} = req.query
@@ -116,6 +118,25 @@ const attendEvent = async (req, res, next) => {
     
 
     await prisma.attendance.create({ data: { userId: req.user.id, eventId: Number(id) } })
+
+    // nodemailer
+    if (process.env.EMAIL_USER) {  
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+        }
+    })
+
+    transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: req.user.email,
+        subject: `Confirmación de asistencia — ${event.title}`,
+        text: `Hola ${req.user.name}, tu asistencia al evento "${event.title}" el ${event.date.toLocaleDateString('es-ES')} ha sido confirmada.`
+    }).catch(err => console.error('Email failed:', err.message))
+}
+
 
     res.status(201).json({ message: 'Attendance confirmed' })
 } catch (err) {

@@ -16,7 +16,7 @@ El MVP (Fase 1) cubre:
 - Confirmar y cancelar asistencia a eventos
 - Panel de organización para publicar y gestionar eventos propios
 - Panel de administración para gestión global
-- Notificación por email al confirmar asistencia (webhook → n8n)
+- Notificación por email al confirmar asistencia (nodemailer)
 
 **Qué NO hace el MVP:** no organiza ni asume responsabilidad por eventos, no construye perfiles con foto, no funciona como red social de consumo continuo, no recopila datos sensibles.
 
@@ -38,7 +38,7 @@ El MVP (Fase 1) cubre:
 | Hash contraseñas | bcryptjs — 10 salt rounds |
 | Validación backend | Zod |
 | Tests | Vitest + Supertest |
-| Integración externa | Webhook POST → n8n |
+| Integración externa | nodemailer (Gmail / Resend en producción) |
 | Deploy backend + BD | Railway |
 | Deploy frontend | Vercel |
 
@@ -198,9 +198,10 @@ Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de ref
 
 | Día | Bloque | Estimado | Real |
 |-----|--------|---------|------|
+| 0 | Prework + Prebloques | ~~~     | 255 min |
 | 1 | Setup + Auth backend | 275 min | 258 min |
 | 2 | CRUD eventos + asistencias | 240 min | 195 min |
-| 3 | Admin + integración + tests | 265 min | ___ |
+| 3 | Admin + integración + tests | 265 min | 126 min |
 | 4 | Frontend setup + auth + rutas | 240 min | ___ |
 | 5 | Home + detalle + asistencia | 240 min | ___ |
 | 6 | Paneles + responsive + polish | 240 min | ___ |
@@ -216,3 +217,30 @@ Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de ref
 |---------|-----|
 | API (Railway) | _pendiente_ |
 | Frontend (Vercel) | _pendiente_ |
+
+---
+
+## 10. Mejoras futuras
+
+### Backend
+
+- [ ] Validar que `req.params.id` es numérico antes de pasarlo a Prisma — actualmente `Number('abc')` devuelve `NaN` y el errorHandler responde 500 en lugar de 400.
+- [ ] Sustituir Gmail por Resend o SendGrid en producción para el envío de emails.
+- [ ] Endpoint de reset de contraseña para admin (`POST /api/admin/users/:id/reset-password`) — actualmente no hay forma de recuperar acceso si se pierde la contraseña y el correo.
+- [ ] Filtrar usuarios por rol en el backend (`GET /api/admin/users?role=USER`) en lugar de hacerlo en el frontend.
+- [ ] Mostrar recuento de asistencias por persona usuaria en el panel de admin (`_count: { attendances: true }`).
+
+### Base de datos
+
+- [ ] **Soft delete / usuario fantasma**: en lugar de borrar usuarios en cascada, marcarlos como eliminados (`deletedAt`) y reasignar sus eventos y asistencias a un usuario especial "Persona eliminada". Así el historial de eventos se mantiene intacto.
+- [ ] Migrar `role` de campo único a relación many-to-many para permitir que una misma persona sea USER y ORGANIZER a la vez (Fase 2).
+- [ ] Añadir `onDelete: Cascade` en las relaciones de Attendance y Event para delegar el borrado en cascada a PostgreSQL en lugar de gestionarlo manualmente en los controladores.
+
+### Frontend
+
+- [ ] Implementar `imageUrl` en el formulario de eventos — decidir entre URL externa o integración con Cloudinary/S3.
+
+### General
+
+- [ ] Integrar Morgan para logging de peticiones HTTP en desarrollo.
+- [ ] Añadir Helmet para cabeceras de seguridad HTTP.

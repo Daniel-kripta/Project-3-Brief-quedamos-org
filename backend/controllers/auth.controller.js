@@ -13,7 +13,7 @@ const register = async (req, res, next) => {
         })
 
         const token = jwt.sign(
-            {id: user.id, email: user.email, role: user.role},
+            {id: user.id, name: user.name, email: user.email, role: user.role},
             process.env.JWT_SECRET,
             {expiresIn: '7d'}
         )
@@ -35,7 +35,7 @@ const login = async (req, res, next) => {
         if (!valid) return res.status(401).json({error: "Invalid credentials"})
         
         const token = jwt.sign(
-            {id: user.id, email: user.email, role: user.role},
+            {id: user.id, name: user.name, email: user.email, role: user.role},
             process.env.JWT_SECRET,
             {expiresIn: '7d'}
         )

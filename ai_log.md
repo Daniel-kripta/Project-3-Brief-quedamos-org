@@ -69,3 +69,26 @@
 - **Aprendizaje:**
   - Entendí cómo funcionan las variables de entorno en Postman: el script `pm.environment.set("token", ...)` en el Login captura el token automáticamente y lo propaga al resto de requests mediante `{{token}}`.
   - Descubrí que Prisma Studio es una maravilla.
+
+---
+
+## 2026-05-11 — Admin + Nodemailer + Seed + Tests (Día 3 completo)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Continuación de la sesión del día 11. Completado el backend al 100%: controlador y rutas de admin, integración de email con nodemailer, seed de datos y tests de integración.
+- **Cómo se usó:** Patrón similar a días anteriores para admin, seed y nodemailer, pero con mucho menos guiado y más autónomo. En los tests, la implicación fue deliberadamente menor: una vez entendido el patrón (beforeAll/afterAll, estructura de cada test), la generación de los archivos de test es una tarea repetitiva y mecánica donde la IA aporta más valor que la escritura manual.
+- **Qué obtuve:** Admin completo (getAllUsers, getAllEvents, deleteUser con borrado en cascada correcto). Integración de nodemailer con Gmail via contraseña de aplicación, patrón fire-and-forget para no bloquear la respuesta. Seed idempotente con `upsert` y protección de entorno con `NODE_ENV`. 8 tests de integración pasando con Vitest + Supertest.
+- **Qué modifiqué o descarté:**
+  - n8n descartado por requerir correo corporativo en el registro — sustituido por nodemailer directamente.
+  - `vitest.config.js` en CommonJS no funciona con Vitest — renombrado a `vitest.config.mjs` con sintaxis ES Module.
+  - `dotenv` movido a `app.js` al descubrir que los tests importan la app directamente sin pasar por `server.js`, dejando `JWT_SECRET` sin cargar.
+  - Tests fallaban por ejecución paralela de los dos archivos — resuelto con `fileParallelism: false` en la config de Vitest.
+  - `deleteUser` en admin diseñado para bloquear el borrado de otros admins — decisión de negocio tomada durante el desarrollo.
+  - Reflexión sobre soft delete como mejora futura: el borrado en cascada actual es funcional pero agresivo. Se documentó en README y CLAUDE.md para valorar cuando haya tiempo.
+- **Tiempo con IA:** 245 min | **Tiempo sin IA (estimado):** 480 min
+- **Progresión notable:** En esta sesión los errores fueron casi exclusivamente typos y pequeños detalles de sintaxis, no de estructura ni lógica. El patrón controller → routes → app.js se aplicó de forma completamente autónoma desde el primer intento. Es una mejora clara respecto a los días anteriores.
+- **Aprendizaje:**
+  - Entendí el patrón fire-and-forget: lanzar una operación asíncrona sin `await` para no bloquear la respuesta al cliente, capturando errores con `.catch()` para logging.
+  - Entendí que el seed usa `upsert` en lugar de `create` para que sea idempotente: se puede ejecutar varias veces sin duplicar datos.
+  - Entendí que `NODE_ENV` es una variable estándar en Node.js que permite adaptar el comportamiento de la app según el entorno (`development`, `test`, `production`).
+  - Entendí que Vitest ejecuta los archivos de test en paralelo por defecto, lo que puede causar condiciones de carrera cuando comparten la misma base de datos.
