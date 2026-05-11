@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "vitest run",
-    "start": "nodemon server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "prisma migrate deploy && node server.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
