@@ -51,12 +51,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/admin/users",
-              "protocol": "http",
+              "raw": "{{Railway_url}}/api/admin/users",
               "host": [
-                "localhost"
+                "{{Railway_url}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "admin",
@@ -103,12 +101,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/admin/users/4",
-              "protocol": "http",
+              "raw": "{{Railway_url}}/api/admin/users/4",
               "host": [
-                "localhost"
+                "{{Railway_url}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "admin",
@@ -159,12 +155,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/admin/users",
-              "protocol": "http",
+              "raw": "{{Railway_url}}/api/admin/users",
               "host": [
-                "localhost"
+                "{{Railway_url}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
                 "admin",
@@ -186,7 +180,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Ironhack UserTest\",\n  \"email\": \"ironhack@example.com\",\n  \"password\": \"ironhack\",\n  \"role\": \"ORGANIZER\"\n}",
+          "raw": "{\n  \"name\": \"Nueva Persona\",\n  \"email\": \"nueva@example.ic\",\n  \"password\": \"password123\",\n  \"role\": \"USER\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -194,12 +188,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/auth/register",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/auth/register",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "auth",
@@ -232,7 +224,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"ironhack@example.com\",\n  \"password\": \"ironhack\"\n}",
+          "raw": "{\n  \"email\": \"admin@quedamos.org\",\n  \"password\": \"admin123\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -240,12 +232,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/auth/login",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/auth/login",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "auth",
@@ -292,12 +282,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -344,12 +332,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/1",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/1",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -393,12 +379,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events"
@@ -441,12 +425,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/1",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/1",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -493,12 +475,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/1",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/1",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -545,12 +525,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/1/attend",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/1/attend",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -595,12 +573,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/categories",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/categories",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "categories"
@@ -649,12 +625,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/users/me/attendances",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/users/me/attendances",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "users",
@@ -702,12 +676,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/events/1/attend",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/events/1/attend",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "events",
@@ -758,12 +730,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/api/users/me/events",
-          "protocol": "http",
+          "raw": "{{Railway_url}}/api/users/me/events",
           "host": [
-            "localhost"
+            "{{Railway_url}}"
           ],
-          "port": "3000",
           "path": [
             "api",
             "users",
