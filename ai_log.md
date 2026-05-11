@@ -72,7 +72,7 @@
 
 ---
 
-## 2026-05-11 — Admin + Nodemailer + Seed + Tests (Día 3 completo)
+## 2026-05-11 — Admin + Nodemailer + Seed + Tests (Día 3 sesión mañana)
 
 - **Herramienta:** Claude (claude-sonnet-4-6)
 - **Contexto:** Continuación de la sesión del día 11. Completado el backend al 100%: controlador y rutas de admin, integración de email con nodemailer, seed de datos y tests de integración.
@@ -86,9 +86,28 @@
   - `deleteUser` en admin diseñado para bloquear el borrado de otros admins — decisión de negocio tomada durante el desarrollo.
   - Reflexión sobre soft delete como mejora futura: el borrado en cascada actual es funcional pero agresivo. Se documentó en README y CLAUDE.md para valorar cuando haya tiempo.
 - **Tiempo con IA:** 245 min | **Tiempo sin IA (estimado):** 480 min
-- **Progresión notable:** En esta sesión los errores fueron casi exclusivamente typos y pequeños detalles de sintaxis, no de estructura ni lógica. El patrón controller → routes → app.js se aplicó de forma completamente autónoma desde el primer intento. Es una mejora clara respecto a los días anteriores.
 - **Aprendizaje:**
-  - Entendí el patrón fire-and-forget: lanzar una operación asíncrona sin `await` para no bloquear la respuesta al cliente, capturando errores con `.catch()` para logging.
   - Entendí que el seed usa `upsert` en lugar de `create` para que sea idempotente: se puede ejecutar varias veces sin duplicar datos.
-  - Entendí que `NODE_ENV` es una variable estándar en Node.js que permite adaptar el comportamiento de la app según el entorno (`development`, `test`, `production`).
   - Entendí que Vitest ejecuta los archivos de test en paralelo por defecto, lo que puede causar condiciones de carrera cuando comparten la misma base de datos.
+
+---
+
+## 2026-05-11 — Deploy backend a Railway (Día 3, sesión tarde)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Con el backend al 100% (del MVP), se procedió a desplegar en Railway antes de empezar el frontend. Decisión deliberada: tener la URL de producción disponible antes de arrancar el Día 4.
+- **Cómo se usó:** Claude guió el proceso paso a paso, explicando cada decisión antes de ejecutarla. La interacción fue más de navegación que de código: entender la interfaz de Railway, diagnosticar errores en los logs y tomar decisiones sobre configuración. También se obtuvo asistencia Claude para modificar el JSON de la colección de Postman y exportar el enviroment.
+- **Qué obtuve:** Backend desplegado y funcionando en Railway (EU West, Netherlands) con PostgreSQL vinculado. Colección Postman actualizada con variable `{{Railway_url}}` para que se pueda testear directamente contra producción sin configurar nada.
+- **Qué modifiqué o descarté:**
+  - `start` script cambiado de `nodemon server.js` a `prisma migrate deploy && node server.js` — nodemon es devDependency y no se instala en producción.
+  - Añadido `postinstall: prisma generate` — sin este paso, el cliente Prisma no se genera tras `npm install` y la app arranca sin los métodos del schema.
+  - `DATABASE_URL` no se inyecta automáticamente entre servicios — hay que vincularla manualmente desde Variables del servicio de Node.
+  - Seed saltado en producción por el condicional `NODE_ENV` — ejecutado con override `NODE_ENV=development node prisma/seed.js`.
+  - Región cambiada a EU West (Netherlands) — decisión de coherencia con la filosofía RGPD del proyecto.
+  - Colección Postman con todas las URLs migradas a `{{Railway_url}}` editando el JSON directamente y enviroment exportado.
+- **Tiempo con IA:** 120 min | **Tiempo sin IA (estimado):** 180 min
+- **Aprendizaje:**
+  - Entendí que en Railway hay dos niveles distintos: el proyecto (configuración general) y el servicio (donde vive la app). El Root Directory se configura en el servicio, no en el proyecto.
+  - Entendí que Railway no vincula servicios automáticamente — DATABASE_URL hay que referenciarla explícitamente con `${{Postgres.DATABASE_URL}}`.
+  - Entendí la tensión entre `NODE_ENV=production` (buena práctica) y la necesidad puntual de ejecutar el seed: la solución es sobreescribir la variable solo para ese comando sin cambiar el entorno global.
+  - Reflexioné sobre la elección de región: EU West no solo es más cercano geográficamente sino coherente con el marco RGPD que define la filosofía del proyecto.

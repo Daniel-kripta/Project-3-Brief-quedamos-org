@@ -215,7 +215,7 @@ Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de ref
 
 | Servicio | URL |
 |---------|-----|
-| API (Railway) | _pendiente_ |
+| API (Railway) | https://project-3-brief-quedamos-org-production.up.railway.app |
 | Frontend (Vercel) | _pendiente_ |
 
 ---

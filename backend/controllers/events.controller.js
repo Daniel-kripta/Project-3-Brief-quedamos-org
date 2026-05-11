@@ -95,6 +95,7 @@ const deleteEvent = async (req, res, next) => {
             return res.status(403).json({ error: 'Forbidden' })
         }
 
+        // se borran las asistencias antes que el evento para evitar referencias huérfanas en la BD
         await prisma.attendance.deleteMany({ where: { eventId: Number(id) } })
         await prisma.event.delete({ where: { id: Number(id) } })
 
@@ -119,7 +120,7 @@ const attendEvent = async (req, res, next) => {
 
     await prisma.attendance.create({ data: { userId: req.user.id, eventId: Number(id) } })
 
-    // nodemailer
+    // nodemailer — sin await para que el email no retrase la respuesta al cliente
     if (process.env.EMAIL_USER) {  
     const transporter = nodemailer.createTransport({
         service: 'gmail',
