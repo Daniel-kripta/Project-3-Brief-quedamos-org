@@ -2,6 +2,7 @@
 
 **Herramienta utilizada:** Claude (claude-sonnet-4-6) via Claude Code CLI, Gemini y Perplexity
 **Modalidad:** Par de programación interactivo. Yo escribo todo el código; Claude explica conceptos, revisa errores y orienta en decisiones arquitectónicas.
+**Actualizado:** 12/05/2026
 
 ---
 ## 2026-05-08/09 — Prework
@@ -111,3 +112,17 @@
   - Entendí que Railway no vincula servicios automáticamente — DATABASE_URL hay que referenciarla explícitamente con `${{Postgres.DATABASE_URL}}`.
   - Entendí la tensión entre `NODE_ENV=production` (buena práctica) y la necesidad puntual de ejecutar el seed: la solución es sobreescribir la variable solo para ese comando sin cambiar el entorno global.
   - Reflexioné sobre la elección de región: EU West no solo es más cercano geográficamente sino coherente con el marco RGPD que define la filosofía del proyecto.
+
+---
+
+## 2026-05-12 — Frontend setup + auth + rutas (Día 4)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Primera sesión del frontend. Setup completo, lógica de autenticación, rutas y páginas de login y registro.
+- **Cómo se usó:** Sesión guiada con el mismo patrón que el backend: Claude explica qué, cómo y por qué antes de cada tarea, y yo escribo el código. En las partes más mecánicas o cuando no tenía suficiente contexto, pedí el código directamente para entenderla.
+- **Qué obtuve:** Setup completo con Vite + React Router. AuthContext, useApi, ProtectedRoute, App.jsx con todas las rutas, Navbar dinámica según rol, Login y Register funcionales contra la API de Railway.
+- **Qué modifiqué o descarté:**
+  - Estructura de carpetas ampliada respecto al plan original: se añadieron `api/`, `layouts/`, `routes/` y `utils/` pensando en el proyecto completo, no solo el MVP.
+- **Tiempo con IA:** ~321 min | **Tiempo sin IA (estimado):** 580 min
+- **Aprendizaje:**
+   - Entendí la diferencia entre `export default` y `export` con llaves, y cómo afecta al import.

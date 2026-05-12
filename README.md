@@ -202,7 +202,7 @@ Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de ref
 | 1 | Setup + Auth backend | 275 min | 258 min |
 | 2 | CRUD eventos + asistencias | 240 min | 195 min |
 | 3 | Admin + integración + tests | 265 min | 126 min |
-| 4 | Frontend setup + auth + rutas | 240 min | ___ |
+| 4 | Frontend setup + auth + rutas | 240 min | 321 min |
 | 5 | Home + detalle + asistencia | 240 min | ___ |
 | 6 | Paneles + responsive + polish | 240 min | ___ |
 | 7 | Despliegue | 300 min | ___ |
@@ -239,6 +239,7 @@ Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de ref
 ### Frontend
 
 - [ ] Implementar `imageUrl` en el formulario de eventos — decidir entre URL externa o integración con Cloudinary/S3.
+- [ ] Redirigir al usuario tras login a la ruta de origen en lugar de siempre a `/dashboard` — mejor UX cuando se llega al login desde una ruta protegida.
 
 ### General
 
