@@ -14,17 +14,31 @@ enum Role {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  email       String       @unique
-  password    String
-  name        String
-  role        Role
-  createdAt   DateTime     @default(now())
-  events      Event[]
-  attendances Attendance[]
+  id                   Int          @id @default(autoincrement())
+  email                String       @unique
+  password             String
+  name                 String
+  role                 Role         @default(USER)
+  createdAt            DateTime     @default(now())
+  preferredZones       String[]
+  excludedZones        String[]
+  preferredCategoryIds Int[]
+  excludedCategoryIds  Int[]
+  preferredTags        String[]
+  excludedTags         String[]
+  events               Event[]
+  attendances          Attendance[]
 }
 
 model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  events      Event[]
+}
+
+model Tag {
   id     Int     @id @default(autoincrement())
   name   String  @unique
   slug   String  @unique
@@ -32,21 +46,25 @@ model Category {
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  date        DateTime
-  location    String
-  area        String
-  maxCapacity Int
-  imageUrl    String?
-  categoryId  Int
-  organizerId Int
-  createdAt   DateTime @default(now())
-
-  category    Category     @relation(fields: [categoryId], references: [id])
-  organizer   User         @relation(fields: [organizerId], references: [id])
-  attendances Attendance[]
+  id                   Int          @id @default(autoincrement())
+  title                String
+  description          String
+  date                 DateTime
+  location             String
+  area                 String
+  maxCapacity          Int?
+  imageUrl             String?
+  tags                 String[]
+  categoryId           Int
+  organizerId          Int
+  createdAt            DateTime     @default(now())
+  minCapacity          Int?
+  registrationOpensAt  DateTime?
+  registrationClosesAt DateTime?
+  category             Category     @relation(fields: [categoryId], references: [id])
+  organizer            User         @relation(fields: [organizerId], references: [id])
+  attendances          Attendance[]
+  specialTags          Tag[]
 }
 
 model Attendance {
@@ -54,9 +72,8 @@ model Attendance {
   userId    Int
   eventId   Int
   createdAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
 }
