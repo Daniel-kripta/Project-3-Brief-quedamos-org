@@ -126,3 +126,17 @@
 - **Tiempo con IA:** ~321 min | **Tiempo sin IA (estimado):** 580 min
 - **Aprendizaje:**
    - Entendí la diferencia entre `export default` y `export` con llaves, y cómo afecta al import.
+
+---
+
+## 2026-05-13 — Deploy Vercel + inicio Día 5 (sesión mañana)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Deploy del frontend en Vercel y primeras decisiones de UI/UX del proyecto. A partir de aquí el uso de IA cambia: Claude pasa a rol de consulta puntual, no de guía paso a paso.
+- **Cómo se usó:** Para las decisiones de diseño y componentes consulta de dudas técnicas concretas. Para el deploy se contrastó un aviso de seguridad (Google Chrome) al respecto de la contraseña admin123, se pidió a Claude soporte para cambiarla en el seed y Railway, para evitar que salte ese aviso
+- **Qué obtuve:** Frontend desplegado en `quedamos-org.vercel.app` y nueva contraseña de admin, sin aviso de seguridad.
+- **Qué modifiqué o descarté:**
+  - Custom Start Command de Railway modificado temporalmente para ejecutar el seed con la nueva contraseña, luego restaurado.
+- **Tiempo con IA:** ___ min | **Tiempo sin IA (estimado):** ___
+- **Aprendizaje:**
+  - ...

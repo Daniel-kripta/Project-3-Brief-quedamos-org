@@ -8,29 +8,36 @@ import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Admin from "./pages/Admin/Admin";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
-import Navbar from "./components/Navbar/Navbar"
+
+import Header from "./components/Header/Header"
+import Footer from "./components/Footer/Footer"
 
 export default function App(){
   return(
     <BrowserRouter>
-      <Navbar/>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/events/:id" element={<EventDetail />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+      <Header/>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+            } />
+          <Route path="/admin" element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <Admin />
+            </ProtectedRoute>
           } />
-        <Route path="/admin" element={
-          <ProtectedRoute roles={["ADMIN"]}>
-            <Admin />
-          </ProtectedRoute>
-        } />
-        <Route path="*" element={<NotFoundPage />} /> 
-      </Routes>
+          <Route path="*" element={<NotFoundPage />} /> 
+        </Routes>
+      </main>
+      <Footer/>
     </BrowserRouter>
+    
+
   )
 } 

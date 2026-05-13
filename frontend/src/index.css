@@ -1,0 +1,29 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  background-color: #f0f0f0;
+    font-family: 'Ubuntu', 'Trebuchet MS', sans-serif;
+}
+
+main{
+    flex: 1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,0 +1,25 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto 10px;
+}
+
+.logoHeader{
+    margin-top: 8px;
+    height: 30px;
+}
+
+.headerLinks{
+    display: flex;
+    flex-direction: row;
+    gap: 10px
+}
+
+.noUserMenu{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding-top: 5px;
+
+}
