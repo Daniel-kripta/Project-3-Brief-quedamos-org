@@ -8,13 +8,13 @@ if (process.env.NODE_ENV === 'production') {
     return
   }
 
-const passwordAdmin = await bcrypt.hash('admin123', 10)
+const passwordAdmin = await bcrypt.hash('quedamos2026', 10)
 const passwordOrg = await bcrypt.hash('org123', 10)
 const passwordUser = await bcrypt.hash('user123', 10)
 
 await prisma.user.upsert({
   where: { email: 'admin@quedamos.org' },
-  update: {},
+  update: { password: passwordAdmin },
   create: { name: 'Admin', email: 'admin@quedamos.org', password: passwordAdmin, role: 'ADMIN' }
 })
 
