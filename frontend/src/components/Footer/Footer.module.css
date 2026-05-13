@@ -1,128 +1,42 @@
-footer {
-  padding-top: 30px;
-  background-color: grey;
-}
-
-.logoFooter {
-  height: 100px;
+.footer {
+  padding: 25px 15px 10px;
   display: flex;
-  justify-content: center;
-}
-
-.logoFooter img {
-  height: 100px;
-}
-
-.socialIconsDiv {
+  flex-direction: column;
   text-align: center;
-  margin: 20px auto;
+  background-color: #f0f0f0;
 }
 
-.socialIcon {
-  color: rgb(208, 230, 202);
-  height: 18px;
-  width: 18px;
-  padding: 5px;
-  margin-top: 10px;
-  margin-left: 10px;
-  background-color: var(--green);
-  border-radius: 50%;
-}
-
-.socialIconFirst {
-  margin-left: 0;
-}
-
-.socialIconsDiv h4 {
-  color: var(--green);
-}
-
-.infoWebPage ul {
-  max-width: 550px;
+.infoFooter {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: 40% 60%;
+  margin-bottom: 35px;
 }
 
-.infoWebPage li:nth-child(-n + 3) {
+.logo {
+  height: 65px;
+  width: auto;
+}
+
+.links {
+  font-size: 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px 5px;
+  text-align: right;
+  border-left: 1px solid black;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.links :nth-child(5){
   grid-column: span 2;
 }
 
-.infoWebPage li:nth-child(4) {
-  grid-column: 2 / span 2;
+.brand{
+  padding-bottom: 20px;
 }
 
-ul li:nth-child(5) {
-  grid-column: 4 / span 2;
-}
-
-.infoWebPage li {
-  display: inline-block;
-  font-size: 0.9em;
-  margin-left: 20px;
-  text-align: center;
-  margin-top: 10px;
-  color: var(--green);
-}
-
-.infoWebPage li:first-child {
-  margin-left: 0;
-}
-
-.infoWebPage {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.signWeb {
-  background-color: var(--green);
-  color: white;
-  margin-top: 30px;
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-@media (min-width: 768px) {
-  footer {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: end;
-    padding: 20px;
-    padding-bottom: 0;
-  }
-
-  .legalInfo {
-    grid-column: span 2;
-  }
-
-  .infoWebPage {
-    margin-top: 15px;
-    justify-content: center;
-    margin-bottom: 15px;
-  }
-
-  .infoWebPage ul {
-    max-width: 100%;
-    display: inline-block;
-    grid-template-columns: inherit;
-  }
-
-  .signWeb {
-    font-size: 0.8em;
-    margin-top: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-left: -20px;
-    margin-right: -20px;
-  }
-
-  .logoFooter {
-    justify-content: left;
-  }
-
-  .socialIconsDiv {
-    text-align: right;
-    margin-right: 0;
-  }
+.brand div{
+  font-size: 0.7rem;
+  padding: 10px;
 }

@@ -1,4 +1,5 @@
-nav {
+.nav {
+    color: rgb(50, 0, 50);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -10,16 +11,19 @@ nav {
     height: 30px;
 }
 
-.headerLinks{
+.icons {
     display: flex;
     flex-direction: row;
-    gap: 10px
+    gap: 4px;
+    align-items: center;
 }
 
-.noUserMenu{
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    padding-top: 5px;
-
+.icons svg {
+    color: rgb(50, 0, 50);
+    width: 40px;
+    height: auto;
+    background-color: white;
+    border-radius: 50%;
+    padding: 3px;
+    border: 2px solid rgb(50, 0, 50);
 }

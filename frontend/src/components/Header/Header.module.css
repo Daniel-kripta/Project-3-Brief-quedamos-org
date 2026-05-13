@@ -1,4 +1,6 @@
 header {
-    background-color: grey;
-    height: 50px;
+    position: relative;
+    height: 60px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
