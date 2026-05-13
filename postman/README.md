@@ -6,7 +6,7 @@ Importa `quedamos-org-api.postman_collection.json` y `quedamos-local.postman_env
 
 | Email | Contraseña | Rol |
 |-------|-----------|-----|
-| `admin@quedamos.org` | `admin123` | ADMIN |
+| `admin@quedamos.org` | `quedamos2026` | ADMIN |
 | `eventos@culturalironhack.ic` | `org123` | ORGANIZER |
 | `gestion-cultural@telde.ic` | `org123` | ORGANIZER |
 | `maria@example.ic` | `user123` | USER |

@@ -224,7 +224,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"admin@quedamos.org\",\n  \"password\": \"admin123\"\n}",
+          "raw": "{\n  \"email\": \"admin@quedamos.org\",\n  \"password\": \"quedamos2026\"\n}",
           "options": {
             "raw": {
               "language": "json"
