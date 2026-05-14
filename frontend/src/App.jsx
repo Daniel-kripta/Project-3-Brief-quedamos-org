@@ -7,6 +7,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Admin from "./pages/Admin/Admin";
+import EventForm from "./pages/EventForm/EventForm"
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 
 import Header from "./components/Header/Header"
@@ -19,7 +20,6 @@ export default function App(){
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={
@@ -32,6 +32,18 @@ export default function App(){
               <Admin />
             </ProtectedRoute>
           } />
+          <Route path="/events/new" element={
+            <ProtectedRoute roles={["ORGANIZER", "ADMIN"]}>
+              <EventForm/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/events/:id/edit" element={
+            <ProtectedRoute roles={["ORGANIZER", "ADMIN"]}>
+              <EventForm />
+            </ProtectedRoute>
+          } />
+
           <Route path="*" element={<NotFoundPage />} /> 
         </Routes>
       </main>
