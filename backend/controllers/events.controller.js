@@ -14,6 +14,7 @@ const getEvents = async (req, res, next) => {
             where,
             include: {
                 category: true,
+                specialTags: true,
                 _count: {select: {attendances: true}}
             }
         })
@@ -30,6 +31,7 @@ const getEvent = async (req, res, next) => {
             where: {id: Number(id)},
             include: {
                 category: true,
+                specialTags: true,
                 organizer: {select: {name: true}},
                 _count: {select: {attendances: true}}
             }
@@ -45,12 +47,27 @@ const getEvent = async (req, res, next) => {
 }
 
 const createEvent = async (req, res, next) => {
-    const {title, description, date, location, area, maxCapacity, imageUrl, categoryId} = req.body
+    const {title, description, date, location, area, maxCapacity, minCapacity, imageUrl, categoryId, tags, specialTagIds, registrationOpensAt, registrationClosesAt} = req.body
     
     try{
     const organizerId = req.user.id
     const event = await prisma.event.create({
-        data: { title, description, date, location, area, maxCapacity, imageUrl, categoryId, organizerId }
+        data: {
+            title,
+            description,
+            date,
+            location,
+            area,
+            maxCapacity,
+            minCapacity,
+            imageUrl,
+            categoryId,
+            tags,
+            specialTags: { connect: (specialTagIds || []).map(id => ({ id })) },
+            organizerId,
+            registrationClosesAt,
+            registrationOpensAt
+        }
     })
     res.status(201).json(event)
 }   catch (err) {
@@ -60,7 +77,7 @@ const createEvent = async (req, res, next) => {
 
 const updateEvent = async (req, res, next) => {
     const {id} = req.params
-    const {title, description, date, location, area, maxCapacity, imageUrl, categoryId} = req.body
+    const {title, description, date, location, area, maxCapacity, minCapacity, imageUrl, categoryId, tags, specialTagIds, registrationOpensAt, registrationClosesAt} = req.body
 
     try{
         const event = await prisma.event.findUnique({
@@ -74,7 +91,21 @@ const updateEvent = async (req, res, next) => {
 
     const updated = await prisma.event.update({
         where: {id: Number(id)},
-        data: {title, description, date, location, area, maxCapacity, imageUrl, categoryId}
+        data: {
+            title,
+            description,
+            date,
+            location,
+            area,
+            maxCapacity,
+            minCapacity,
+            imageUrl,
+            categoryId,
+            tags, // TODO: si se elimina un valor de VALID_TAGS (lib/tag.js), los eventos con ese tag fallarán al actualizar
+            specialTags: { set: (specialTagIds || []).map(id => ({ id })) },
+            registrationClosesAt,
+            registrationOpensAt
+        }
     })
     res.json(updated)
     }    catch (err) {
@@ -115,7 +146,7 @@ const attendEvent = async (req, res, next) => {
         include: {_count: {select: {attendances: true}}}  })
 
     if (!event) return res.status(404).json({ error: 'Event not found' })
-    if (event._count.attendances >= event.maxCapacity) return res.status(400).json({ error: 'Event is full' })
+    if (event.maxCapacity !== null && event._count.attendances >= event.maxCapacity) return res.status(400).json({ error: 'Event is full' })
     
 
     await prisma.attendance.create({ data: { userId: req.user.id, eventId: Number(id) } })
