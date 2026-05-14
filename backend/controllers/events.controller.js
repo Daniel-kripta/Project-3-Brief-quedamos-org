@@ -67,7 +67,13 @@ const createEvent = async (req, res, next) => {
             organizerId,
             registrationClosesAt,
             registrationOpensAt
-        }
+        },
+        include: {
+            category: true,
+            specialTags: true,
+            organizer: { select: { name: true } }
+    }
+
     })
     res.status(201).json(event)
 }   catch (err) {
