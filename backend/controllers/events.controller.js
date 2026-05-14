@@ -3,11 +3,14 @@ const nodemailer = require('nodemailer')
 
 
 const getEvents = async (req, res, next) => {
-    const {area, categoryId, from} = req.query
+    const {area, categoryId, from, to} = req.query
     const where = {}
     if (area) where.area = area
     if (categoryId) where.categoryId = Number(categoryId)
-    if (from) where.date = {gte: new Date(from)}
+    if (from || to) where.date = {
+        ...(from && {gte: new Date(from)}),
+        ...(to && {lte: new Date(to)})
+    }
 
     try{
         const events = await prisma.event.findMany({
