@@ -2,7 +2,7 @@
 
 **Herramienta utilizada:** Claude (claude-sonnet-4-6) via Claude Code CLI, Gemini y Perplexity
 **Modalidad:** Par de programación interactivo. Yo escribo todo el código; Claude explica conceptos, revisa errores y orienta en decisiones arquitectónicas.
-**Actualizado:** 12/05/2026
+**Actualizado:** 13/05/2026
 
 ---
 ## 2026-05-08/09 — Prework
@@ -129,14 +129,33 @@
 
 ---
 
-## 2026-05-13 — Deploy Vercel + inicio Día 5 (sesión mañana)
+## 2026-05-13 — Deploy Vercel + Layout base + Componentes globales (Día 5, sesión mañana)
 
 - **Herramienta:** Claude (claude-sonnet-4-6)
-- **Contexto:** Deploy del frontend en Vercel y primeras decisiones de UI/UX del proyecto. A partir de aquí el uso de IA cambia: Claude pasa a rol de consulta puntual, no de guía paso a paso.
-- **Cómo se usó:** Para las decisiones de diseño y componentes consulta de dudas técnicas concretas. Para el deploy se contrastó un aviso de seguridad (Google Chrome) al respecto de la contraseña admin123, se pidió a Claude soporte para cambiarla en el seed y Railway, para evitar que salte ese aviso
-- **Qué obtuve:** Frontend desplegado en `quedamos-org.vercel.app` y nueva contraseña de admin, sin aviso de seguridad.
+- **Contexto:** Deploy del frontend en Vercel (50 min) y construcción del layout base completo: Header, Footer, Navbar con doble menú (UserMenu + NavMenu), logos SVG y sistema de iconos (3h35min).
+- **Cómo se usó:** Para el deploy, consulta puntual para resolver un aviso de seguridad de Chrome sobre la contraseña del admin. Para los componentes, el rol de Claude fue responder dudas técnicas concretas a medida que surgían: comportamiento de CSS Modules, posicionamiento del panel de menú, patrón para cerrar al hacer click fuera. Las decisiones de diseño (qué incluir, cómo debe verse) fueron siempre propias.
+- **Qué obtuve:** Frontend desplegado en `quedamos-org.vercel.app`. Header y Footer con identidad visual propia del proyecto. Sistema de doble menú (perfil y navegación) con panel de fondo blur que se abre bajo el header ocupando todo el ancho. Componentes `Logo`, `LogoShort`, `MenuIcon`, `UserMenuIcon`, `CloseIcon` como componentes React reutilizables con `currentColor`.
 - **Qué modifiqué o descarté:**
-  - Custom Start Command de Railway modificado temporalmente para ejecutar el seed con la nueva contraseña, luego restaurado.
-- **Tiempo con IA:** ___ min | **Tiempo sin IA (estimado):** ___
+  - Custom Start Command de Railway modificado temporalmente para ejecutar el seed con la contraseña nueva, luego restaurado.
+  - Footer rediseñado: se descartaron los links a redes sociales al reconocer la contradicción con los principios del proyecto (una plataforma que critica el capitalismo de vigilancia no puede enlazar a Meta o X).
+  - Panel del menú inicialmente se solapaba con el header en lugar de abrirse debajo. Causa: `position: relative` estaba en `<nav>` en lugar de en `<header>`. Al moverlo, el panel con `top: 100%; left: 0; right: 0` se posiciona ya correctamente.
+  - Selector `nav { }` en CSS Module no funcionaba como esperado. Causa: los selectores de elemento en CSS Modules son globales, no se scopean. Solución: `.nav { }` con clase explícita.
+- **Tiempo con IA:** ~265 min | **Tiempo sin IA (estimado):** ___
 - **Aprendizaje:**
-  - ...
+  - Aprendí el patrón de `useRef` + `document.addEventListener("mousedown")` para detectar clicks fuera de un elemento, y la necesidad de la función de limpieza en `useEffect` (`return () => removeEventListener(...)`) para evitar memory leaks.
+  - Entendí que `backdrop-filter: blur()` requiere también `-webkit-backdrop-filter` para compatibilidad con Safari/WebKit.
+  - Entendí que en CSS Modules los selectores de elemento (`nav`, `header`, `a`) no se scopean — solo las clases. Si quiero estilos que no escapen al resto del documento tengo que usar clases.
+  - Consolidé el modelo mental de posicionamiento absoluto relativo al ancestro con `position: relative`, que no había tenido tan claro hasta resolver el bug del panel.
+
+---
+
+## 2026-05-13 — Brainstorming de producto + rediseño de base de datos (Día 5, sesión tarde)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Antes de construir las páginas principales, sesión dedicada a pensar en el proyecto desde sus casos de uso reales. El resultado fue un documento de producto y un rediseño del schema de base de datos, con su correspondiente migración y seed reescrito. Tiempo total: ~3h30min.Tras esto se reconfiguró el plan de trabajo.
+- **Cómo se usó:** Sesión de co-diseño de producto: yo planteé los casos de uso y objetivos y funcionalidades, y las contrasté con las propuestas de Claude. Finalmente valoré cada una contrastándola con el sentido del proyecto. Una vez definidas las necesidades, con Claude se diseñó un schema Prisma base a que posteriormente adapté y pulí y cambié algunas formas rebuscadas de solucionar que tuvo Claude (ejemplo, rechacé booleanos a favor de arrays + búsqueda includes, eliminando un campo `color` en Category que no correspondía al back sino al front, etc.). Claude escribió el seed completo por ser una tarea mecánica y repetitiva; yo lo revisé para corregir aspectos de lenguaje y lógica de los datos, y añadí casos omitidos.
+- **Qué obtuve:** Documento auxiliar con decisiones de producto, UX y arquitectura de menús. Schema v2 con 5 modelos (User con campos de preferencias, Category con description, nuevo modelo Tag, Event con sistema de doble etiquetado y maxCapacity nullable). Seed con 12 users, 5 categories, 3 tags especiales y 25 eventos variados y representativos de los usos.
+- **Qué modifiqué o descarté:**
+  - Claude propuso `color String?` en Category para la identidad visual por categoría — descartado porque esa lógica era de CSS, no en de BD.
+  - Claude propuso `excludePaidEvents Boolean` — reemplazado por `excludedTags String[]` para mantener coherencia con el vocabulario controlado de `Event.tags` y evitar multiplicar campos booleanos por cada atributo. Su propuesta suponía que para cada filtro se necesitara actualizar la base de datos, muy limitante.
+- **Tiempo con IA:** ~210 min | **Tiempo sin IA (estimado):** incierto.
