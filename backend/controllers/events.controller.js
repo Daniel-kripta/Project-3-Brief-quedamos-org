@@ -7,8 +7,8 @@ const getEvents = async (req, res, next) => {
     const where = {}
     if (area) where.area = area
     if (categoryId) where.categoryId = Number(categoryId)
-    if (from || to) where.date = {
-        ...(from && {gte: new Date(from)}),
+    where.date = {
+        gte: from ? new Date(from) : new Date(),
         ...(to && {lte: new Date(to)})
     }
 
