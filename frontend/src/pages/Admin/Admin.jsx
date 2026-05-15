@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { useApi } from "../../hooks/useApi"
 import API_URL from "../../api/config"
+import styles from "./Admin.module.css"
 
 export default function Admin() {
     const { request, loading, error } = useApi()
@@ -38,32 +39,77 @@ export default function Admin() {
     }
 
     return (
-        <div>
+        <div className={styles.adminContainer}>
             <h1>Panel de administración</h1>
             {error && <p>{error}</p>}
 
-            <section>
-                <h2>Personas usuarias</h2>
-                {users.length === 0 && <p>No hay personas usuarias.</p>}
-                {users.map(user => (
-                    <div key={user.id}>
-                        <span>{user.name} — {user.email} — {user.role}</span>
-                        <button onClick={() => handleDeleteUser(user.id)} disabled={loading}>Borrar</button>
-                    </div>
-                ))}
+            <section className={styles.section}>
+                <h2>Personas usuarias ({users.length})</h2>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map(user => (
+                            <tr key={user.id}>
+                                <td data-label="Nombre">{user.name}</td>
+                                <td data-label="Email">{user.email}</td>
+                                <td data-label="Rol">{user.role}</td>
+                                <td>
+                                    <div className={styles.actions}>
+                                        <button
+                                            className={styles.btnDelete}
+                                            onClick={() => handleDeleteUser(user.id)}
+                                            disabled={loading}>
+                                            Borrar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </section>
 
-            <section>
-                <h2>Eventos</h2>
-                {events.length === 0 && <p>No hay eventos.</p>}
-                {events.map(event => (
-                    <div key={event.id}>
-                        <Link to={`/events/${event.id}`}>{event.title}</Link>
-                        <span> — {new Date(event.date).toLocaleDateString("es-ES")}</span>
-                        <Link to={`/events/${event.id}/edit`}>Editar</Link>
-                        <button onClick={() => handleDeleteEvent(event.id)} disabled={loading}>Borrar</button>
-                    </div>
-                ))}
+            <section className={styles.section}>
+                <h2>Eventos ({events.length})</h2>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {events.map(event => (
+                            <tr key={event.id}>
+                                <td data-label="Título">
+                                    <Link to={`/events/${event.id}`}>{event.title}</Link>
+                                </td>
+                                <td data-label="Fecha">{new Date(event.date).toLocaleDateString("es-ES")}</td>
+                                <td>
+                                    <div className={styles.actions}>
+                                        <Link to={`/events/${event.id}/edit`} className={styles.btnEdit}>
+                                            Editar
+                                        </Link>
+                                        <button
+                                            className={styles.btnDelete}
+                                            onClick={() => handleDeleteEvent(event.id)}
+                                            disabled={loading}>
+                                            Borrar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </section>
         </div>
     )

@@ -34,7 +34,7 @@
 }
 
 .infoContentCard h3{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--color-secundary);
     padding-bottom: 5px;
 }
 
@@ -61,7 +61,7 @@
 
 .categoryCard{
     position: absolute;
-    top: 53px;
+    top: 13.5%;
     right: 10px;
     background-color: white;
     padding: 5px;
@@ -74,7 +74,7 @@
 .timeCard{
     position: absolute;
     color: white;
-    top: 45px;
+    top: 12%;
     left: 10px;
     backdrop-filter: blur(20px);
     background-color: rgba(0, 0, 0, 0.671);
@@ -86,8 +86,8 @@
 }
 
 .dateEventCard{
-    font-size: 6cqw;
-    border-bottom: 4px solid black;
+    font-size: 7cqw;
+    border-bottom: 4px solid var(--color-secundary);
     margin-bottom: 5px;
     padding-bottom: 5px;
 }

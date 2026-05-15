@@ -1,15 +1,39 @@
 import { Link } from "react-router-dom"
+import { useAuth } from "../../context/AuthContext"
+import styles from "./ProjectIntro.module.css"
 
 export default function ProjectIntro() {
+    const { user } = useAuth()
+
     return (
-        <div>
-            <h2>Sobre nuestro proyecto</h2>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-            </p>
-            <Link to="/sobre-el-proyecto">Saber más sobre el proyecto</Link>
+        <div className={styles.intro}>
+            <h2>Te damos la bienvenida a quedamos.org</h2>
+            {!user && (
+                <>
+                    <p>
+                        quedamos.org forma parte de un proyecto social destinado a mejorar la calidad de vida
+                        de las personas a través de la reconstrucción del tejido social. La plataforma facilita
+                        la gestión de eventos para entidades sociales al tiempo que ayuda a encontrar espacios
+                        de encuentro atendiendo a la diversidad de las personas.
+                    </p>
+                    <p>
+                        Parte de un compromiso claro con la ética digital: sin patrones oscuros, sin algoritmos
+                        de retención ni dinámicas del capitalismo de vigilancia — solo el contacto presencial
+                        entre personas, libre de filtros y estímulos perjudiciales.
+                    </p>
+                    <p>
+                        Pensada para toda la ciudadanía, con especial atención a colectivos con mayores
+                        dificultades de participación social: personas mayores, con discapacidad, en
+                        situación de exclusión social. También un espacio para que entidades del tercer sector
+                        y pequeños comercios visibilicen sus iniciativas más allá de sus redes habituales.
+                    </p>
+                    <p>
+                        En esta primera fase se implementa un MVP de demostración técnica básica, por lo que
+                        la mayoría de funcionalidades se irán añadiendo durante el desarrollo.
+                    </p>
+                </>
+            )}
+            <Link to="/sobre-el-proyecto" className={styles.link}>Saber más sobre el proyecto</Link>
         </div>
     )
 }

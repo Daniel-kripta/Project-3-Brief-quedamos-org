@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
 import API_URL from "../../api/config";
+import styles from "./EventDetail.module.css"
 
 export default function EventDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { request, loading, error } = useApi();
 
   const [event, setEvent] = useState(null);
   const [isAttending, setIsAttending] = useState(false);
+  
+  const location = useLocation()
 
   useEffect(() => {
     fetch(`${API_URL}/api/events/${id}`)
@@ -19,13 +21,11 @@ export default function EventDetail() {
       .then(setEvent);
 
     if (user) {
-      fetch(`${API_URL}/api/users/me/attendances`, {
+      fetch(`${API_URL}/api/events/${id}/attend`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
         .then((r) => r.json())
-        .then((attendances) => {
-          setIsAttending(attendances.some((a) => a.eventId === Number(id)));
-        });
+        .then(data => setIsAttending(data.attending))
     }
   }, [id, user]);
 
@@ -50,48 +50,64 @@ export default function EventDetail() {
   };
 
   return (
-    <div>
+    <div className={styles.eventDetailDisplay} >
       {!event && <p>Cargando...</p>}
       {error && <p>{error}</p>}
       {event && (
         <>
-          <h1>{event.title}</h1>
-          <p>{event.description}</p>
-          <p>Organiza: {event.organizer?.name}</p>
-          <p>{new Date(event.date).toLocaleString("es-ES")}</p>
-          <p>
-            {event.location} — {event.area}
-          </p>
-          <p>Categoría: {event.category?.name}</p>
-          {event.imageUrl && <img src={event.imageUrl} alt={event.title} />}
-          <p>Vamos: {event._count?.attendances}</p>
-          {event.maxCapacity && <p>Aforo máximo: {event.maxCapacity}</p>}
-          {event.tags?.length > 0 && (
-            <p>Tags: {event.tags.join(", ")}</p>
+          <h1 className={styles.titleEventDetail}>{event.title}</h1>
+          <div>
+              <div className={styles.imageEventDetail}>
+              {event.imageUrl && <img src={event.imageUrl} alt={event.title} />}
+              <div className={styles.attendAndCategory}>
+                <div>{event.category?.name}</div>
+                <div>Vamos: {event._count?.attendances}{event.maxCapacity && <span>/{event.maxCapacity}</span>}
+                </div>
+              </div>
+            </div>
+          <div className={styles.actionsContainer}>
+            {user &&
+              (isAttending ? (
+                <button onClick={handleCancel} disabled={loading}>
+                  Cancelar asistencia
+                </button>
+              ) : (
+                <button
+                    onClick={handleAttend}
+                    disabled={loading || (event.maxCapacity && event._count?.attendances >= event.maxCapacity)}
+                >
+                    {event.maxCapacity && event._count?.attendances >= event.maxCapacity ? "Aforo completo" : "Voy"}
+                </button>
+              ))}
+            {!user && (
+              <Link to="/login" state={{from: location}}><p className={styles.editButton}>
+                <strong>Inicia sesión</strong> para confirmar asistencia
+              </p></Link>
+            )}
+            {((user?.role === "ORGANIZER" && event.organizerId === user?.id) || user?.role === "ADMIN") && (
+              <Link className={styles.editButton} to={`/events/${id}/edit`}>Editar evento</Link>
+            )}
+          </div>
+          </div>
+          <div className={styles.detailContainer}>
+            <span>Detalles del evento:</span>
+            <div className={styles.descriptionEventDetail}>{event.description}</div>
+            <div>🗓 {new Date(event.date).toLocaleString("es-ES")}</div>
+            <div>
+              <span>📍 Lugar:</span>
+              <div>{event.location}</div>
+              <div>🏘 {event.area}</div>
+            </div>
+            <span>Organiza:</span>
+            <div className={styles.organizerEventDetail}>{event.organizer?.name}</div>
+          </div>
+            {event.tags?.length > 0 && (
+            <div>Tags: {event.tags.join(", ")}</div>
           )}
           {event.specialTags?.length > 0 && (
-            <p>Etiquetas especiales: {event.specialTags.map(t => t.name).join(", ")}</p>
+            <div>Etiquetas especiales: {event.specialTags.map(t => t.name).join(", ")}</div>
           )}
 
-          {user &&
-            (isAttending ? (
-              <button onClick={handleCancel} disabled={loading}>
-                Cancelar asistencia
-              </button>
-            ) : (
-              <button onClick={handleAttend} disabled={loading}>
-                Voy
-              </button>
-            ))}
-          {!user && (
-            <p>
-              <Link to="/login">Inicia sesión</Link> para confirmar asistencia
-            </p>
-          )}
-
-          {((user?.role === "ORGANIZER" && event.organizerId === user?.id) || user?.role === "ADMIN") && (
-            <Link to={`/events/${id}/edit`}>Editar evento</Link>
-          )}
         </>
       )}
     </div>

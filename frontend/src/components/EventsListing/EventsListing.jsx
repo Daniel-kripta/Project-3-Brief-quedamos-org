@@ -8,6 +8,7 @@ export default function EventsListing() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [events, setEvents] = useState([])
     const [categories, setCategories] = useState([])
+    const [areas, setAreas] = useState([])
     const [loading, setLoading] = useState(false)
 
     const area = searchParams.get("area") || ""
@@ -17,6 +18,12 @@ export default function EventsListing() {
         fetch(`${API_URL}/api/categories`)
             .then(r => r.json())
             .then(setCategories)
+    }, [])
+
+    useEffect(() => {
+    fetch(`${API_URL}/api/events/areas`)
+        .then(r => r.json())
+        .then(data => setAreas(Array.isArray(data) ? data : []))
     }, [])
 
     useEffect(() => {
@@ -50,18 +57,21 @@ export default function EventsListing() {
     return (
         <div>
             <h2>Todos los eventos</h2>
-            <div>
+            <div className={style.eventsListingFilters}>
                 <select value={categoryId} onChange={handleCategoryChange}>
                     <option value="">Todas las categorías</option>
                     {categories.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                 </select>
-                <input
-                    placeholder="Filtrar por área"
-                    value={area}
-                    onChange={handleAreaChange}
-                />
+
+                <select value={area} onChange={handleAreaChange}>
+                    <option value="">Todas las localizaciones</option>
+                    {areas.map(a => (
+                        <option key={a} value={a}>{a}</option>
+                    ))}
+                </select>
+
                 <button onClick={handleClear}>Limpiar filtros</button>
             </div>
 

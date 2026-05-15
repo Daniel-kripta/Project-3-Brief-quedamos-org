@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApi } from "../../hooks/useApi";
 import API_URL from "../../api/config";
+import styles from "./EventForm.module.css";
+
+const today = new Date().toISOString().slice(0, 10)
+
 
 export default function EventForm() {
   const { id } = useParams();
@@ -12,19 +16,23 @@ export default function EventForm() {
   const { request, loading, error } = useApi();
 
   const [categories, setCategories] = useState([]);
+  const [hasRegistrationClose, setHasRegistrationClose] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
-    date: "",
+    date: today,
+    time: "",
     location: "",
     area: "",
     maxCapacity: "",
     minCapacity: "",
-    imageUrl: "",
+    imageUrl: `https://picsum.photos/id/${Math.floor(Math.random() * 500) + 1}/800/1000`,
     categoryId: "",
     tags: [],
-    registrationOpensAt: "",
-    registrationClosesAt: "",
+    registrationOpensDate: today,
+    registrationOpensTime: "",
+    registrationClosesDate: "",
+    registrationClosesTime: "",
   });
 
   useEffect(() => {
@@ -36,10 +44,12 @@ export default function EventForm() {
       fetch(`${API_URL}/api/events/${id}`)
         .then((r) => r.json())
         .then((event) => {
+          if (event.registrationClosesAt) setHasRegistrationClose(true);
           setForm({
             title: event.title,
             description: event.description,
-            date: event.date.slice(0, 16),
+            date: event.date.slice(0, 10),
+            time: event.date.slice(11, 16),
             location: event.location,
             area: event.area,
             maxCapacity: event.maxCapacity ?? "",
@@ -47,9 +57,10 @@ export default function EventForm() {
             imageUrl: event.imageUrl ?? "",
             categoryId: event.categoryId,
             tags: event.tags,
-            registrationOpensAt: event.registrationOpensAt?.slice(0, 16) ?? "",
-            registrationClosesAt:
-              event.registrationClosesAt?.slice(0, 16) ?? "",
+            registrationOpensDate: event.registrationOpensAt?.slice(0, 10) ?? today,
+            registrationOpensTime: event.registrationOpensAt?.slice(11, 16) ?? "",
+            registrationClosesDate: event.registrationClosesAt?.slice(0, 10) ?? "",
+            registrationClosesTime: event.registrationClosesAt?.slice(11, 16) ?? "",
           });
         });
     }
@@ -57,6 +68,7 @@ export default function EventForm() {
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
 
   const handleTagToggle = (tag) => {
     setForm((prev) => ({
@@ -80,16 +92,21 @@ export default function EventForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      ...form,
-      date: form.date + ":00.000Z",
+      title: form.title,
+      description: form.description,
+      date: `${form.date}T${form.time || "00:00"}:00.000Z`,
+      location: form.location,
+      area: form.area,
       categoryId: Number(form.categoryId),
       maxCapacity: form.maxCapacity !== "" ? Number(form.maxCapacity) : null,
       minCapacity: form.minCapacity !== "" ? Number(form.minCapacity) : null,
-      registrationOpensAt: form.registrationOpensAt
-        ? form.registrationOpensAt + ":00.000Z"
+      imageUrl: form.imageUrl || undefined,
+      tags: form.tags,
+      registrationOpensAt: form.registrationOpensDate
+        ? `${form.registrationOpensDate}T${form.registrationOpensTime || "00:00"}:00.000Z`
         : undefined,
-      registrationClosesAt: form.registrationClosesAt
-        ? form.registrationClosesAt + ":00.000Z"
+      registrationClosesAt: hasRegistrationClose && form.registrationClosesDate
+        ? `${form.registrationClosesDate}T${form.registrationClosesTime || "00:00"}:00.000Z`
         : undefined,
     };
     try {
@@ -102,10 +119,10 @@ export default function EventForm() {
   };
 
   return (
-    <div>
+    <div className={styles.eventFormContainer}>
       <h1>{isEditMode ? "Editar evento" : "Nuevo evento"}</h1>
       {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <label>
           Título
           <input
@@ -126,16 +143,44 @@ export default function EventForm() {
           />
         </label>
 
+        <div className={styles.dateGroup}>
+          <span>Fecha</span>
+          <div className={styles.dateRow}>
+            <input type="date" name="date" value={form.date} onChange={handleChange} required />
+            <input type="time" name="time" value={form.time} onChange={handleChange} required />
+          </div>
+        </div>
+
         <label>
-          Fecha
-          <input
-            type="datetime-local"
-            name="date"
-            value={form.date}
+          Categoría
+          <select
+            name="categoryId"
+            value={form.categoryId}
             onChange={handleChange}
             required
+          >
+            <option value="">Selecciona una categoría</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          URL de imagen
+          <input
+            type="url"
+            name="imageUrl"
+            value={form.imageUrl}
+            onChange={handleChange}
           />
         </label>
+
+        {form.imageUrl && (
+          <img src={form.imageUrl} alt="Vista previa" className={styles.imagePreview} />
+        )}
 
         <label>
           Lugar
@@ -155,23 +200,6 @@ export default function EventForm() {
             onChange={handleChange}
             required
           />
-        </label>
-
-        <label>
-          Categoría
-          <select
-            name="categoryId"
-            value={form.categoryId}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Selecciona una categoría</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
         </label>
 
         <label>
@@ -196,121 +224,90 @@ export default function EventForm() {
           />
         </label>
 
-        <label>
-          URL de imagen
+        <div className={styles.dateGroup}>
+          <span>Apertura de inscripción</span>
+          <div className={styles.dateRow}>
+            <input type="date" name="registrationOpensDate" value={form.registrationOpensDate} onChange={handleChange} />
+            <input type="time" name="registrationOpensTime" value={form.registrationOpensTime} onChange={handleChange} />
+          </div>
+        </div>
+
+        <label className={styles.checkboxLabel}>
           <input
-            type="url"
-            name="imageUrl"
-            value={form.imageUrl}
-            onChange={handleChange}
+            type="checkbox"
+            checked={hasRegistrationClose}
+            onChange={e => setHasRegistrationClose(e.target.checked)}
           />
+          <span>Con cierre de inscripción</span>
         </label>
 
-        <label>
-          Apertura de inscripción
-          <input
-            type="datetime-local"
-            name="registrationOpensAt"
-            value={form.registrationOpensAt}
-            onChange={handleChange}
-          />
-        </label>
+        {hasRegistrationClose && (
+          <div className={styles.dateGroup}>
+            <span>Cierre de inscripción</span>
+            <div className={styles.dateRow}>
+              <input type="date" name="registrationClosesDate" value={form.registrationClosesDate} onChange={handleChange} />
+              <input type="time" name="registrationClosesTime" value={form.registrationClosesTime} onChange={handleChange} />
+            </div>
+          </div>
+        )}
 
-        <label>
-          Cierre de inscripción
-          <input
-            type="datetime-local"
-            name="registrationClosesAt"
-            value={form.registrationClosesAt}
-            onChange={handleChange}
-          />
-        </label>
+        <div className={styles.toggleGroup}>
+          <span>Coste de asistencia</span>
+          <div className={styles.toggle}>
+            <button type="button"
+              className={`${styles.toggleBtn} ${form.tags.includes("paid") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["paid", "free"], "paid")}>
+              Pago
+            </button>
+            <button type="button"
+              className={`${styles.toggleBtn} ${!form.tags.includes("paid") && !form.tags.includes("free") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["paid", "free"], "")}>
+              ·
+            </button>
+            <button type="button"
+              className={`${styles.toggleBtn} ${form.tags.includes("free") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["paid", "free"], "free")}>
+              Gratuito
+            </button>
+          </div>
+        </div>
 
-        <fieldset>
-          <legend>Precio</legend>
-          <label>
-            <input
-              type="radio"
-              name="paidFree"
-              checked={
-                !form.tags.includes("paid") && !form.tags.includes("free")
-              }
-              onChange={() => handleRadioPair(["paid", "free"], "")}
-            />{" "}
-            Sin especificar
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="paidFree"
-              checked={form.tags.includes("paid")}
-              onChange={() => handleRadioPair(["paid", "free"], "paid")}
-            />{" "}
-            De pago
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="paidFree"
-              checked={form.tags.includes("free")}
-              onChange={() => handleRadioPair(["paid", "free"], "free")}
-            />{" "}
-            Gratuito
-          </label>
-        </fieldset>
+        <div className={styles.toggleGroup}>
+          <span>Espacio del evento</span>
+          <div className={styles.toggle}>
+            <button type="button"
+              className={`${styles.toggleBtn} ${form.tags.includes("indoor") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["indoor", "outdoor"], "indoor")}>
+              Interior
+            </button>
+            <button type="button"
+              className={`${styles.toggleBtn} ${!form.tags.includes("indoor") && !form.tags.includes("outdoor") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["indoor", "outdoor"], "")}>
+              ·
+            </button>
+            <button type="button"
+              className={`${styles.toggleBtn} ${form.tags.includes("outdoor") ? styles.toggleActive : ""}`}
+              onClick={() => handleRadioPair(["indoor", "outdoor"], "outdoor")}>
+              Exterior
+            </button>
+          </div>
+        </div>
 
-        <fieldset>
-          <legend>Espacio</legend>
-          <label>
-            <input
-              type="radio"
-              name="indoorOutdoor"
-              checked={
-                !form.tags.includes("indoor") && !form.tags.includes("outdoor")
-              }
-              onChange={() => handleRadioPair(["indoor", "outdoor"], "")}
-            />{" "}
-            Sin especificar
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="indoorOutdoor"
-              checked={form.tags.includes("indoor")}
-              onChange={() => handleRadioPair(["indoor", "outdoor"], "indoor")}
-            />{" "}
-            Interior
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="indoorOutdoor"
-              checked={form.tags.includes("outdoor")}
-              onChange={() => handleRadioPair(["indoor", "outdoor"], "outdoor")}
-            />{" "}
-            Exterior
-          </label>
-        </fieldset>
-
-        <fieldset>
-          <legend>Otros</legend>
-          <label>
-            <input
-              type="checkbox"
-              checked={form.tags.includes("beginner_friendly")}
-              onChange={() => handleTagToggle("beginner_friendly")}
-            />{" "}
-            Apto para principiantes
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={form.tags.includes("collaboration")}
-              onChange={() => handleTagToggle("collaboration")}
-            />{" "}
-            Colaboración
-          </label>
-        </fieldset>
+        <div className={styles.toggleGroup}>
+          <span>Otros</span>
+          <div className={styles.pillRow}>
+            <button type="button"
+              className={`${styles.pill} ${form.tags.includes("beginner_friendly") ? styles.pillActive : ""}`}
+              onClick={() => handleTagToggle("beginner_friendly")}>
+              Apto para principiantes
+            </button>
+            <button type="button"
+              className={`${styles.pill} ${form.tags.includes("collaboration") ? styles.pillActive : ""}`}
+              onClick={() => handleTagToggle("collaboration")}>
+              Colaboración
+            </button>
+          </div>
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading

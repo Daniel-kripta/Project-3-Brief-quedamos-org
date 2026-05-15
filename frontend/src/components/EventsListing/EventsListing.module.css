@@ -6,6 +6,22 @@
     margin: 25px;
 }
 
+.eventsListingFilters {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    gap: 10px;
+}
+
+.eventsListingFilters :first-child{
+    grid-column: 1/ -1;
+    height: 30px;
+}
+
+.eventsListingFilters button{
+    background-color: var(--color-outer);
+}
+
+
 @media (min-width: 480px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);

@@ -1,9 +1,13 @@
-# Log de uso de IA — quedamos.org
+# uso de IA — quedamos.org
 
 **Herramienta utilizada:** Claude (claude-sonnet-4-6) via Claude Code CLI, Gemini y Perplexity
 **Modalidad:** Par de programación interactivo. Yo escribo todo el código; Claude explica conceptos, revisa errores y orienta en decisiones arquitectónicas.
-**Actualizado:** 13/05/2026
+**Actualizado:** 15/05/2026
+**Rresumen:** Durante el desarrollo del proyecto, he integrado diversas herramientas de IA (Claude, Gemini y Perplexity) bajo una modalidad de "par de programación interactiva". La estrategia principal consistió en utilizar a Gemini para la gestión inicial de contextos extensos y planificación arquitectónica, mientras que Claude se convirtió en el compañero diario para la implementación técnica. En cada sesión, prioricé que la IA explicara los conceptos lógicos y patrones de diseño (como el patrón singleton en Prisma, middlewares en Express o el uso de *hooks* en React) antes de proceder a la escritura manual del código, asegurando así que cada funcionalidad implementada estuviera respaldada por una comprensión teórica.
 
+Este flujo de trabajo permitió optimizar tiempos en tareas repetitivas, como la generación de archivos de test de integración con Vitest o la creación de un *seed* de datos robusto, además de facilitar el despliegue continuo en Railway y Vercel. A lo largo del proceso, mantuve un control crítico sobre las sugerencias de la IA, descartando propuestas que se alejaban de la filosofía del proyecto —como el uso de redes sociales o campos innecesarios en la base de datos— y rectificando el rumbo cuando la complejidad del código generado excedía mi capacidad de asimilación. El resultado ha sido un desarrollo ágil y consciente, donde la IA ha actuado como un tutor técnico que me ha permitido centrarme en las decisiones de producto y en la calidad del resultado final. En el proceso he aprendido bastantes cosas y la metodología de par de programación es hasta ahora el que mejor me ha funcionado.
+
+# Log de uso de IA
 ---
 ## 2026-05-08/09 — Prework
 
@@ -159,3 +163,15 @@
   - Claude propuso `color String?` en Category para la identidad visual por categoría — descartado porque esa lógica era de CSS, no en de BD.
   - Claude propuso `excludePaidEvents Boolean` — reemplazado por `excludedTags String[]` para mantener coherencia con el vocabulario controlado de `Event.tags` y evitar multiplicar campos booleanos por cada atributo. Su propuesta suponía que para cada filtro se necesitara actualizar la base de datos, muy limitante.
 - **Tiempo con IA:** ~210 min | **Tiempo sin IA (estimado):** incierto.
+
+
+## 2026-05-14 — Aplicados los cambios en la BD con PRISMA y rectificación del proyecto (Día 6)
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Tras el día de ayer se procedió a aplicar los cambios en el prisma-schema, los controladores y las rutas, las rutes en app.jsx. También se adaptó Postman a los cambios. Se procedió a desarrollar las funcionalidades y sistema de categorías y menús. Finalmente se descartaron una vez terminadas.
+- **Cómo se usó:** Se obtuvo guía para resolver algunas cuestiones lógicas en prisma. También se usó para generar el nuevo seed, adaptando el contenido al nuevo schema. A la tarde se usó Claude para desarrollar practicamente todo los sistemas y menus pensados ayer, pero finalmente descarté todo eso por no ser capaz de asumir todo el código generado y me decanté por un frontend que acompañe al backend, que es lo que se evalua principalmente. A la tarde noche, se usó Claude para consultas puntuales con respecto a css y retoques menores del back y react.
+- **Qué obtuve:** Proyecto muy avanzado ya. EL sistema descartado era funcional y fue almacenado para continuar desde ahí tras el proyecto del bootcamp, con más tiempo para asimilar el código.
+- **Qué modifiqué o descarté:**
+  - Se descartó el sistema desarrollado, ya comentado.
+- **Aprendizaje:**
+  - El sistema de pedir código y luego intentar entenderlo para replicarlo no es viable con niveles de complejidad avanzados.
+  - Es importante seguir trabajando sobre necesidades concretas y poder reorientar las decisiones que pueda tomar la IA como se ha hecho durante estas semanas.

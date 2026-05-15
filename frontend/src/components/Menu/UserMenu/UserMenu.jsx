@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { useAuth } from "../../context/AuthContext"
-import { UserMenuIcon, CloseIcon } from "../Icons/Icons"
+import { useAuth } from "../../../context/AuthContext"
+import { UserMenuIcon, CloseIcon } from "../../Icons/Icons"
 import styles from "./UserMenu.module.css"
+import menu from "../Menu.module.css"
 
 export default function UserMenu() {
     const [open, setOpen] = useState(false)
@@ -23,11 +24,11 @@ export default function UserMenu() {
 
     return (
         <div ref={ref}>
-            <button onClick={() => setOpen(!open)} className={styles.trigger}>
+            <button onClick={() => setOpen(!open)} className={menu.trigger}>
                 {open ? <CloseIcon /> : <UserMenuIcon />}
             </button>
             {open && (
-                <div className={styles.panel}>
+                <div className={menu.panel}>
                     {user ? (
                         <>
                             <span className={styles.userName}>{user.name}</span>

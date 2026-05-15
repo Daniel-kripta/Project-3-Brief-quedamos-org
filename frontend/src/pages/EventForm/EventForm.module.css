@@ -1,0 +1,129 @@
+.eventFormContainer {
+    padding: 20px;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-secundary);
+    border-radius: 10px;
+}
+
+.form {
+    display: grid;
+    row-gap: 15px;
+    margin-top: 20px;
+}
+
+.form > label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form > label input,
+.form > label select {
+    width: 100%;
+    min-height: 30px;
+}
+
+.form > label textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+}
+
+.imagePreview {
+    width: 100%;
+    aspect-ratio: 0.8;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.form > label.checkboxLabel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.form > label.checkboxLabel input {
+    width: auto;
+}
+
+.dateGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dateRow {
+    display: flex;
+    gap: 10px;
+}
+
+.dateRow input {
+    flex: 1;
+}
+
+
+
+.toggle {
+    display: flex;
+    border: 1px solid var(--color-secundary);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.toggleBtn {
+    flex: 1;
+    border: none;
+    border-right: 1px solid var(--color-secundary);
+    background: transparent;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: inherit;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.toggleBtn:last-child {
+    border-right: none;
+}
+
+.toggleActive {
+    background-color: var(--color-secundary);
+    color: var(--color-primary);
+}
+
+.pillRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pill {
+    border: 1px solid var(--color-secundary);
+    background: transparent;
+    border-radius: 20px;
+    padding: 4px 14px;
+    cursor: pointer;
+    font-size: inherit;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.pillActive {
+    background-color: var(--color-secundary);
+    color: var(--color-primary);
+}
+
+.form button[type="submit"] {
+    height: 36px;
+    cursor: pointer;
+}
+
+@media (min-width: 480px) {
+
+.toggleGroup {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    align-items: center;
+    gap: 10px;
+}
+}

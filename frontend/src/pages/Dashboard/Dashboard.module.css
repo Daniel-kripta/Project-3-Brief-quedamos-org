@@ -1,0 +1,85 @@
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btnNew {
+    background-color: var(--color-outer);
+    border: 1px solid var(--color-secundary);
+    border-radius: 4px;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: inherit;
+    color: var(--color-secundary);
+    text-decoration: none;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    display: none;
+}
+
+.table tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid #d0d4d8;
+}
+
+.table tr:last-child {
+    border-bottom: none;
+}
+
+.table td {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border: none;
+}
+
+.table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    min-width: 70px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btnEdit,
+.btnCancel {
+    background-color: var(--color-outer);
+    border: 1px solid var(--color-secundary);
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: inherit;
+    color: var(--color-secundary);
+}
+
+.btnCancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (min-width: 480px) {
+    .table thead { display: table-header-group; }
+    .table tr { display: table-row; padding: 0; border-bottom: none; }
+    .table th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--color-secundary); }
+    .table td { display: table-cell; padding: 8px 10px; border-bottom: 1px solid #d0d4d8; vertical-align: middle; }
+    .table td::before { display: none; }
+    .table tr:last-child td { border-bottom: none; }
+}

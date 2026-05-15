@@ -1,12 +1,15 @@
 import { useState } from "react"
 import{useAuth} from "../../context/AuthContext" 
-import{useNavigate, Link} from "react-router-dom"
+import{useNavigate, Link, useLocation} from "react-router-dom"
 import{useApi} from "../../hooks/useApi" 
+import styles from "./AuthForm.module.css"
+
 
 export default function Login(){
     const [form, setForm] = useState({email:"", password:""}  )
     const{login} = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
 
     const{request, loading, error} = useApi()
 
@@ -22,7 +25,7 @@ export default function Login(){
             } )
 
             login(data.user, data.token)
-            navigate("/dashboard")
+            navigate(location.state?.from?.pathname || "/dashboard")
 
 
         } catch {} 
@@ -30,16 +33,16 @@ export default function Login(){
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className={styles.loginContainer}>
+            <form className={styles.formLogin} onSubmit={handleSubmit}>
                 <h1>Iniciar sesión</h1>
                 {error && <p>{error}</p>}
                 <label>
-                    Email
+                    <span>Email: </span>
                     <input type="email" name="email" value={form.email} onChange={handleChange} required autoComplete="email" />
                 </label>
                 <label>
-                    Contraseña
+                    <span>Contraseña: </span>
                     <input type="password" name="password" value={form.password} onChange={handleChange} required />
                 </label>
                 <button type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>

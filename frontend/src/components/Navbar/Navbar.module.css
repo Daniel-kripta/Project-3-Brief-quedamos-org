@@ -7,10 +7,10 @@
     top: 0;
     backdrop-filter: blur(100px);
     padding: 10px 0;
+    color: var(--color-secundary);
 }
 
 .nav {
-    color: rgb(50, 0, 50);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,10 +30,28 @@
 }
 
 .icons svg {
-    color: rgb(50, 0, 50);
     width: 40px;
     height: auto;
     background-color: rgba(255, 255, 255, 0.523);
     border-radius: 50%;
     padding: 3px;
+}
+
+.icons svg path{
+    fill:  var(--color-secundary);
+}
+
+.btnCreate {
+    font-size: 1.3rem;
+    font-weight: 300;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-secundary);
+    border-radius: 50%;
+    background-color: var(--color-secundary);
+    color: var(--color-primary);
 }

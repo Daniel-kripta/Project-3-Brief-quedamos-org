@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useApi } from "../../hooks/useApi"
+import styles from "./AuthForm.module.css"
 
 export default function Register() {
     const [form, setForm] = useState({ name: "", email: "", password: "", role: "USER" })
@@ -21,25 +22,25 @@ export default function Register() {
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className={styles.loginContainer}>
+            <form className={styles.formLogin} onSubmit={handleSubmit}>
                 <h1>Crear cuenta</h1>
                 {error && <p>{error}</p>}
                 <label>
-                    Nombre
+                    <span>Nombre:</span>
                     <input type="text" name="name" value={form.name} onChange={handleChange} required />
                 </label>
                 <label>
-                    Email
+                    <span>Email:</span>
                     <input type="email" name="email" value={form.email} onChange={handleChange} required autoComplete="email" />
                 </label>
                 <label>
-                    Contraseña
+                    <span>Contraseña:</span>
                     <input type="password" name="password" value={form.password} onChange={handleChange} required />
                 </label>
                 <label>
-                    Rol
-                    <select name="role" value={form.role} onChange={handleChange}>
+                    <span>Rol:</span>
+                    <select name="role" value={form.role} onChange={handleChange} style={{width: "70%"}}>
                         <option value="USER">Persona usuaria</option>
                         <option value="ORGANIZER">Organizador/a</option>
                     </select>
