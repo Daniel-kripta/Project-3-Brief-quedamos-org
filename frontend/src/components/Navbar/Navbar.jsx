@@ -6,12 +6,14 @@ import styles from "./Navbar.module.css"
 
 export default function Navbar() {
     return (
-        <nav className={styles.nav}>
-            <Link to="/"><Logo className={styles.logoHeader}/></Link>
-            <div className={styles.icons}>
-                <UserMenu />
-                <NavMenu />
-            </div>
-        </nav>
+        <header className={styles.navHeader}>
+            <nav className={styles.nav}>
+                <Link to="/"><Logo className={styles.logoHeader}/></Link>
+                <div className={styles.icons}>
+                    <UserMenu />
+                    <NavMenu />
+                </div>
+            </nav>
+        </header>
     )
 }

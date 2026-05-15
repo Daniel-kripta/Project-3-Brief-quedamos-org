@@ -15,6 +15,7 @@ const getEvents = async (req, res, next) => {
     try{
         const events = await prisma.event.findMany({
             where,
+            orderBy: {date: "asc"},
             include: {
                 category: true,
                 specialTags: true,

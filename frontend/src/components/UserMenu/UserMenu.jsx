@@ -32,12 +32,12 @@ export default function UserMenu() {
                         <>
                             <span className={styles.userName}>{user.name}</span>
                             <Link to="/dashboard" onClick={close}>Mi panel</Link>
-                            {user.role === "ADMIN" && <Link to="/admin" onClick={close}>Admin</Link>}
+                            {user.role === "ADMIN" && <Link to="/admin" onClick={close}>Administración</Link>}
                             <button onClick={() => { logout(); close() }}>Cerrar sesión</button>
                         </>
                     ) : (
                         <>
-                            <Link to="/login" onClick={close}>Login</Link>
+                            <Link to="/login" onClick={close}>Iniciar sesión</Link>
                             <Link to="/register" onClick={close}>Registrarse</Link>
                         </>
                     )}

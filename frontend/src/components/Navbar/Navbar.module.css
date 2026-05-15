@@ -1,3 +1,14 @@
+.navHeader{
+    position: fixed;
+    width: 100%;
+    max-width: 720px;
+    height: 70px;
+    z-index: 1000;
+    top: 0;
+    backdrop-filter: blur(100px);
+    padding: 10px 0;
+}
+
 .nav {
     color: rgb(50, 0, 50);
     display: flex;
@@ -22,8 +33,7 @@
     color: rgb(50, 0, 50);
     width: 40px;
     height: auto;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.523);
     border-radius: 50%;
     padding: 3px;
-    border: 2px solid rgb(50, 0, 50);
 }

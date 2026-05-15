@@ -27,6 +27,7 @@ export default function NavMenu() {
             {open && (
                 <div className={styles.panel}>
                     <Link to="/" onClick={close}>Inicio</Link>
+                    <Link to="/dashboard" onClick={close}>Mi panel</Link>
                 </div>
             )}
         </div>
