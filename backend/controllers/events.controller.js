@@ -22,7 +22,10 @@ const getEvents = async (req, res, next) => {
                 _count: {select: {attendances: true}}
             }
         })
-        res.json(events)
+        const visible = events.filter(e =>
+            e.maxCapacity === null || e._count.attendances < e.maxCapacity
+        )
+        res.json(visible)
     }   catch (err) {
         next(err)
     }
@@ -201,9 +204,33 @@ const cancelAttendance = async (req, res, next) => {
         next(err)
     }
 
-
-
-
 }
 
-module.exports = {getEvents, getEvent, createEvent, updateEvent, deleteEvent, attendEvent, cancelAttendance}
+const getAreas = async (req, res, next) => {
+    try {
+        const areas = await prisma.event.findMany({
+            select: { area: true },
+            distinct: ['area'],
+            orderBy: { area: 'asc' }
+        })
+        res.json(areas.map(e => e.area))
+    } catch (err) {
+        next(err)
+    }
+}
+
+const checkAttendance = async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const attendance = await prisma.attendance.findUnique({
+            where: { userId_eventId: { userId: req.user.id, eventId: Number(id) } }
+        })
+        res.json({ attending: !!attendance })
+    } catch (err) {
+        next(err)
+    }
+}
+
+
+
+module.exports = {getEvents, getEvent, createEvent, updateEvent, deleteEvent, attendEvent, cancelAttendance, getAreas, checkAttendance}
