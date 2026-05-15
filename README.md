@@ -6,61 +6,172 @@ Plataforma web ética para centralizar la gestión de eventos y fomentar el encu
 
 ---
 
-## 1. Qué es quedamos.org
+## Índice
 
-quedamos.org es una plataforma que permite a personas y entidades de Canarias descubrir, organizar y asistir a eventos presenciales no mercantiles. El proyecto responde a una necesidad real de reconstruir el tejido social mediante la participación activa en actividades locales.
+- [Qué es quedamos.org](#qué-es-quedamosorg)
+- [Demo](#demo)
+- [Quick start](#quick-start)
+- [Variables de entorno](#variables-de-entorno)
+- [Scripts disponibles](#scripts-disponibles)
+- [Arquitectura](#arquitectura)
+- [Base de datos](#base-de-datos)
+- [Endpoints de la API](#endpoints-de-la-api)
+- [Tests](#tests)
+- [Stack tecnológico](#stack-tecnológico)
+- [Complicaciones y resoluciones](#complicaciones-y-resoluciones)
+- [Resumen del uso de IA en el desarrollo](#resumen-del-uso-de-ia-en-el-desarrollo)
+- [Tiempos de desarrollo](#tiempos-de-desarrollo)
+- [Mejoras futuras](#mejoras-futuras)
+
+---
+
+## Qué es quedamos.org
+
+quedamos.org forma parte de un proyecto social destinado a mejorar la calidad de vida de las personas a través de la reconstrucción del tejido social en Canarias. La plataforma facilita la gestión de eventos para entidades sociales al tiempo que ayuda a encontrar espacios de encuentro atendiendo a la diversidad de las personas — sin algoritmos, sin perfiles invasivos, sin dark patterns.
 
 El MVP (Fase 1) cubre:
-- Registro y login con roles diferenciados (USER, ORGANIZER, ADMIN)
+
+- Registro y login con roles diferenciados (`USER`, `ORGANIZER`, `ADMIN`)
 - Descubrir y filtrar eventos por área, categoría y fecha
 - Confirmar y cancelar asistencia a eventos
-- Panel de organización para publicar y gestionar eventos propios
-- Panel de administración para gestión global
+- Panel de organizador para publicar y gestionar eventos propios
+- Panel de administración para gestión global de usuarios y eventos
 - Notificación por email al confirmar asistencia (nodemailer)
 
 **Qué NO hace el MVP:** no organiza ni asume responsabilidad por eventos, no construye perfiles con foto, no funciona como red social de consumo continuo, no recopila datos sensibles.
 
 ---
 
-## 2. Stack tecnológico
+## Demo
 
-| Capa | Tecnología |
-|------|-----------|
-| Frontend | React 18 + Vite |
-| Routing | React Router v6 |
-| Estado global | Context API |
-| HTTP client | fetch nativo |
-| Estilos | CSS Modules |
-| Backend | Node.js + Express |
-| ORM | Prisma 5 |
-| Base de datos | PostgreSQL |
-| Autenticación | JWT (jsonwebtoken) — 7 días de expiración |
-| Hash contraseñas | bcryptjs — 10 salt rounds |
-| Validación backend | Zod |
-| Tests | Vitest + Supertest |
-| Integración externa | nodemailer (Gmail / Resend en producción) |
-| Deploy backend + BD | Railway |
-| Deploy frontend | Vercel |
+| Servicio | URL |
+|---------|-----|
+| Frontend (Vercel) | _pendiente de deploy_ |
+| API (Railway) | https://project-3-brief-quedamos-org-production.up.railway.app |
+
+Credenciales de prueba:
+
+| Rol | Email | Contraseña |
+|-----|-------|-----------|
+| ADMIN | admin@quedamos.org | quedamos2026 |
+| ORGANIZER | info@asociacion-el-timple.ic | org123 |
+| USER | maria@example.ic | user123 |
 
 ---
 
-## 3. Estructura de la base de datos
+## Quick start
 
-4 tablas: `User`, `Category`, `Event`, `Attendance`.
+```bash
+# Clonar el repositorio
+git clone <url-del-repo>
+cd Project-3-Brief-quedamos-org
+```
 
-### Modelos principales
+**Backend:**
+```bash
+cd backend
+npm install
+cp .env.example .env   # editar con DATABASE_URL, JWT_SECRET, PORT
+npx prisma migrate dev
+npx prisma db seed
+npm run dev            # arranca en http://localhost:3000
+```
 
-**User** — gestiona personas registradas con tres roles posibles: `USER`, `ORGANIZER`, `ADMIN`.
+**Frontend:**
+```bash
+cd frontend
+npm install
+# crear .env con VITE_API_URL=http://localhost:3000
+npm run dev            # arranca en http://localhost:5173
+```
 
-**Event** — tabla central del sistema. Relacionada con `User` (organizador) y `Category`. Incluye campo `area` para zonas geográficas de Gran Canaria (municipios y zonas urbanas).
+---
 
-**Attendance** — registra una fila por persona inscrita a un evento. La combinación `userId + eventId` tiene restricción `@@unique` para evitar inscripciones duplicadas.
+## Variables de entorno
 
-**Category** — tabla independiente para categorías de eventos (Cultura, Deporte, Música, etc.), cargada dinámicamente desde la API.
+**`backend/.env`**
+```
+DATABASE_URL="postgresql://user:pass@localhost:5432/quedamos_db"
+JWT_SECRET="secreto-largo-y-aleatorio"
+PORT=3000
+EMAIL_USER="tu-cuenta@gmail.com"
+EMAIL_PASS="contraseña-de-aplicacion"
+```
 
-### Roles (MVP)
+**`frontend/.env`**
+```
+VITE_API_URL=http://localhost:3000
+```
 
-El sistema de roles es **único por persona**: al registrarse, cada persona elige entre `USER`, `ORGANIZER` o `ADMIN`.
+---
+
+## Scripts disponibles
+
+**Backend:**
+```
+npm run dev    # desarrollo con nodemon
+npm start      # producción (migrate deploy + node server.js)
+npm test       # tests con Vitest + Supertest
+```
+
+**Frontend:**
+```
+npm run dev    # desarrollo con Vite
+npm run build  # build de producción
+```
+
+---
+
+## Arquitectura
+
+### Backend
+
+```
+Request
+  → Routes (mapeo HTTP)
+  → Middleware: verifyToken / requireRole / validate(schema)
+  → Controller (lógica de negocio)
+  → Prisma Client
+  → PostgreSQL
+  → errorHandler (P2002→409, P2025→404, resto→500)
+```
+
+### Frontend
+
+**Rutas:**
+
+| Ruta | Componente | Protección |
+|------|-----------|-----------|
+| `/` | Home | Pública |
+| `/events/:id` | EventDetail | Pública (botón "voy" requiere auth) |
+| `/login` | Login | Pública |
+| `/register` | Register | Pública |
+| `/dashboard` | Dashboard | Autenticado |
+| `/events/new` | EventForm | ORGANIZER / ADMIN |
+| `/events/:id/edit` | EventForm | ORGANIZER / ADMIN |
+| `/admin` | Admin | Solo ADMIN |
+
+**Estado global:** Context API — solo `AuthContext` en el MVP: usuario, token, login, logout, cargando.
+
+**Hook principal:** `useApi` — encapsula fetch con token automático desde localStorage, estados `loading` y `error`.
+
+---
+
+## Base de datos
+
+5 tablas: `User`, `Category`, `Tag`, `Event`, `Attendance`.
+
+**User** — roles `USER`, `ORGANIZER`, `ADMIN`. Incluye arrays de preferencias y exclusiones para Fase 2.
+
+**Event** — tabla central. Relacionada con `User` (organizador), `Category` y `Tag`. Campo `area` para zonas de Gran Canaria. `maxCapacity` nullable: si es `null`, el evento no tiene límite ni requiere inscripción previa.
+
+**Attendance** — una fila por asistencia confirmada. Restricción `@@unique([userId, eventId])` para evitar duplicados.
+
+**Category** — categorías de eventos con `slug` para filtrado y URLs.
+
+**Tag** — etiquetas editoriales (many-to-many con Event). Distintas de `tags String[]` en Event, que son atributos funcionales con vocabulario controlado (`paid`, `free`, `indoor`, `outdoor`, `beginner_friendly`, `collaboration`).
+
+### Roles
 
 | Rol | Permisos |
 |-----|----------|
@@ -68,33 +179,29 @@ El sistema de roles es **único por persona**: al registrarse, cada persona elig
 | `ORGANIZER` | Todo lo de USER + crear/editar/borrar sus propios eventos |
 | `ADMIN` | Todo + editar/borrar cualquier evento + panel de administración |
 
-El escenario de una persona que es a la vez participante habitual y organizadora ocasional queda pendiente para la Fase 2, donde se migraría `role` a una relación many-to-many. Prisma gestionaría esa migración sin rehacer la estructura base.
-
-### Campo `imageUrl`
-
-Campo opcional (`String?`) añadido al modelo `Event`. Existe en la BD pero su implementación en el frontend queda pendiente: se decidirá entre permitir solo URLs externas o integrar un servicio de almacenamiento (Cloudinary, S3).
-
 ---
 
-## 4. Endpoints de la API
+## Endpoints de la API
 
 ### Auth — `/api/auth`
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| POST | `/api/auth/register` | No | Registro. Body: name, email, password, role |
+| POST | `/api/auth/register` | No | Registro |
 | POST | `/api/auth/login` | No | Login. Devuelve JWT |
 
 ### Eventos — `/api/events`
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| GET | `/api/events` | No | Listar con filtros: `?area=`, `?categoryId=`, `?from=` |
+| GET | `/api/events` | No | Listar con filtros: `?area=`, `?categoryId=`, `?from=`, `?to=` |
+| GET | `/api/events/areas` | No | Lista de áreas con eventos |
 | GET | `/api/events/:id` | No | Detalle + count asistentes |
+| GET | `/api/events/:id/attend` | Autenticado | Comprobar si el usuario asiste |
 | POST | `/api/events` | ORGANIZER/ADMIN | Crear evento |
 | PUT | `/api/events/:id` | Propietario/ADMIN | Editar evento |
 | DELETE | `/api/events/:id` | Propietario/ADMIN | Borrar evento |
-| POST | `/api/events/:id/attend` | Autenticado | Confirmar asistencia |
+| POST | `/api/events/:id/attend` | Autenticado | Confirmar asistencia + envía email |
 | DELETE | `/api/events/:id/attend` | Autenticado | Cancelar asistencia |
 
 ### Categorías — `/api/categories`
@@ -120,128 +227,106 @@ Campo opcional (`String?`) añadido al modelo `Event`. Existe en la BD pero su i
 
 ---
 
-## 5. Instalación local
-
-```bash
-# Clonar el repositorio
-git clone <url-del-repo>
-
-# Instalar dependencias del backend
-cd backend
-npm install
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con DATABASE_URL, JWT_SECRET, PORT
-
-# Ejecutar migraciones
-npx prisma migrate dev
-
-# Ejecutar seed de datos
-npx prisma db seed
-
-# Arrancar el servidor
-npm run dev
-```
-
-```bash
-# Instalar dependencias del frontend
-cd frontend
-npm install
-
-# Configurar variable de entorno
-cp .env.example .env
-# Editar .env con VITE_API_URL=http://localhost:3000
-
-# Arrancar el frontend
-npm run dev
-```
-
----
-
-## 6. Tests
+## Tests
 
 ```bash
 cd backend
 npm test
 ```
 
-8 tests de integración con Vitest + Supertest que cubren registro, login, CRUD de eventos con distintos roles y gestión de asistencias.
+8 tests de integración con Vitest + Supertest:
 
-**Nota sobre metodología:** Se optó por no seguir TDD (Test Driven Development) por dos razones. Primera, el tiempo disponible es de 8 días y TDD ralentiza el desarrollo inicial mientras se asimila el flujo. Segunda, el brief evalúa que la API funciona correctamente, no la metodología de testing. Los tests se escriben al final del backend para verificar el comportamiento ya implementado, no para guiarlo.
+| # | Test | Resultado esperado |
+|---|------|-------------------|
+| 1 | POST /api/auth/register con datos válidos | 201 |
+| 2 | POST /api/auth/register con email duplicado | 409 |
+| 3 | POST /api/auth/login con credenciales correctas | 200 + token |
+| 4 | GET /api/events sin auth | 200 |
+| 5 | POST /api/events sin token | 401 |
+| 6 | POST /api/events con token de USER | 403 |
+| 7 | POST /api/events con token de ORGANIZER | 201 |
+| 8 | POST + DELETE /api/events/:id/attend | 201 y 200 |
 
----
-
-## 7. Herramientas utilizadas
-
-### Entorno de desarrollo
-- **VSCodium** — editor de código
-- **Postman** — pruebas manuales de la API durante el desarrollo
-- **Prisma Studio** — exploración y verificación de datos en la BD
-
-### Librerías y frameworks
-- **Express** — framework HTTP para Node.js
-- **Prisma 5** — ORM para PostgreSQL
-- **Zod** — validación de schemas en el backend
-- **bcryptjs** — hash de contraseñas
-- **jsonwebtoken** — generación y verificación de JWT
-- **Vitest + Supertest** — tests de integración
-
-### IA
-- **Claude (claude-sonnet-4-6)** vía Claude Code CLI — par de programación durante todo el desarrollo. Daniel escribe todo el código; Claude explica conceptos, revisa errores y guía decisiones arquitectónicas. El uso está documentado en detalle en [ai_log.md](ai_log.md).
+Se optó por no seguir TDD: con 8 días de desarrollo y evaluación centrada en funcionalidad, los tests se escriben al final para verificar el comportamiento implementado, no para guiarlo.
 
 ---
 
-## 8. Tiempos de desarrollo
+## Stack tecnológico
 
-Estimaciones calculadas asumiendo trabajo con asistencia de IA y proyecto de referencia.
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | React 18 + Vite |
+| Routing | React Router v6 |
+| Estado global | Context API |
+| HTTP client | fetch nativo |
+| Estilos | CSS Modules |
+| Backend | Node.js + Express |
+| ORM | Prisma 5 |
+| Base de datos | PostgreSQL |
+| Autenticación | JWT — 7 días de expiración |
+| Hash contraseñas | bcryptjs — 10 salt rounds |
+| Validación backend | Zod |
+| Tests | Vitest + Supertest |
+| Integración externa | nodemailer (Gmail) |
+| Deploy backend + BD | Railway (EU West) |
+| Deploy frontend | Vercel |
+
+---
+
+## Complicaciones y resoluciones
+
+**Prisma v7 incompatible con el stack del bootcamp.** La versión más reciente introdujo breaking changes. Solución: bajar a Prisma 5, estable con Node.js + Express en este contexto.
+
+**Railway no tiene shell interactiva.** No es posible ejecutar comandos puntuales como seed o migraciones manuales. Solución: cambiar temporalmente el Custom Start Command del servicio, ejecutar y revertir.
+
+**`dotenv` debe cargarse en `app.js`, no en `server.js`.** Los tests importan `app` directamente sin pasar por `server.js`. Si la carga está solo en `server.js`, los tests no leen las variables de entorno. Solución: mover `dotenv.config()` a `app.js`.
+
+**`fileParallelism: false` en Vitest.** Dos suites compartiendo la misma BD generan condiciones de carrera. Solución: deshabilitar la ejecución paralela de archivos de test.
+
+**Ordenación de rutas en Express.** `GET /events/areas` después de `GET /events/:id` hace que Express trate "areas" como un id. Solución: las rutas estáticas siempre antes que las dinámicas.
+
+**`cqw` referenciando el viewport en lugar de `main`.** Sin un ancestro con `container-type`, `cqw` cae al viewport. Solución: añadir `container-type: inline-size` al elemento `main` en `index.css`.
+
+---
+
+## Resumen del uso de IA en el desarrollo
+
+**Claude (claude-sonnet-4-6)** vía Claude Code CLI — par de programación durante todo el desarrollo. Daniel escribe todo el código; Claude explica conceptos, revisa errores, advierte sobre decisiones arquitectónicas y guía la resolución de bugs. El log completo de uso está en [ai_log.md](ai_log.md).
+
+---
+
+## Tiempos de desarrollo
 
 | Día | Bloque | Estimado | Real |
 |-----|--------|---------|------|
-| 0 | Prework + Prebloques | ~~~     | 255 min |
+| 0 | Prework + Prebloques | — | 255 min |
 | 1 | Setup + Auth backend | 275 min | 258 min |
 | 2 | CRUD eventos + asistencias | 240 min | 195 min |
 | 3 | Admin + integración + tests | 265 min | 126 min |
 | 4 | Frontend setup + auth + rutas | 240 min | 321 min |
-| 5 | Home + detalle + asistencia | 240 min | ___ |
-| 6 | Paneles + responsive + polish | 240 min | ___ |
-| 7 | Despliegue | 300 min | ___ |
-| 8 | Bugs + README + presentación | 300 min | ___ |
-| **Total** | | **~2100 min (~35h)** | ___ |
+| 5 | Layout + componentes + deploy | 240 min | — |
+| 6 | Páginas funcionales + recogida de cable | 240 min | — |
+| 7 | CSS + responsive + polish | 240 min | — |
+| 8 | Bugs + README + presentación | 300 min | — |
+| **Total** | | **~2100 min (~35h)** | — |
 
 ---
 
-## 9. URLs de producción
-
-| Servicio | URL |
-|---------|-----|
-| API (Railway) | https://project-3-brief-quedamos-org-production.up.railway.app |
-| Frontend (Vercel) | _pendiente_ |
-
----
-
-## 10. Mejoras futuras
+## Mejoras futuras
 
 ### Backend
 
-- [ ] Validar que `req.params.id` es numérico antes de pasarlo a Prisma — actualmente `Number('abc')` devuelve `NaN` y el errorHandler responde 500 en lugar de 400.
-- [ ] Sustituir Gmail por Resend o SendGrid en producción para el envío de emails.
-- [ ] Endpoint de reset de contraseña para admin (`POST /api/admin/users/:id/reset-password`) — actualmente no hay forma de recuperar acceso si se pierde la contraseña y el correo.
-- [ ] Filtrar usuarios por rol en el backend (`GET /api/admin/users?role=USER`) en lugar de hacerlo en el frontend.
-- [ ] Mostrar recuento de asistencias por persona usuaria en el panel de admin (`_count: { attendances: true }`).
+- [ ] Validar que `req.params.id` es numérico — `Number('abc')` devuelve `NaN` y el errorHandler responde 500 en lugar de 400.
+- [ ] Sustituir Gmail por Resend o SendGrid en producción.
+- [ ] Endpoint de reset de contraseña para admin (`POST /api/admin/users/:id/reset-password`).
+- [ ] Filtrar usuarios por rol en el backend (`?role=USER`) en lugar de hacerlo en el frontend.
 
 ### Base de datos
 
-- [ ] **Soft delete / usuario fantasma**: en lugar de borrar usuarios en cascada, marcarlos como eliminados (`deletedAt`) y reasignar sus eventos y asistencias a un usuario especial "Persona eliminada". Así el historial de eventos se mantiene intacto.
-- [ ] Migrar `role` de campo único a relación many-to-many para permitir que una misma persona sea USER y ORGANIZER a la vez (Fase 2).
-- [ ] Añadir `onDelete: Cascade` en las relaciones de Attendance y Event para delegar el borrado en cascada a PostgreSQL en lugar de gestionarlo manualmente en los controladores.
+- [ ] **Soft delete**: marcar usuarios como eliminados (`deletedAt`) en lugar de borrado en cascada, para preservar el historial de eventos y asistencias.
+- [ ] Migrar `role` de campo único a relación many-to-many (Fase 2) para permitir que una persona sea USER y ORGANIZER simultáneamente.
 
 ### Frontend
 
-- [ ] Implementar `imageUrl` en el formulario de eventos — decidir entre URL externa o integración con Cloudinary/S3.
-- [ ] Redirigir al usuario tras login a la ruta de origen en lugar de siempre a `/dashboard` — mejor UX cuando se llega al login desde una ruta protegida.
-
-### General
-
-- [ ] Integrar Morgan para logging de peticiones HTTP en desarrollo.
-- [ ] Añadir Helmet para cabeceras de seguridad HTTP.
+- [ ] Páginas estáticas institucionales: `/sobre-el-proyecto`, `/privacidad`, `/contacto`, `/denuncias`, `/accesibilidad`, `/aviso-legal`.
+- [ ] Página de perfil de usuario con gestión de preferencias (`preferredZones`, `preferredCategoryIds`, etc.) — Fase 2.
