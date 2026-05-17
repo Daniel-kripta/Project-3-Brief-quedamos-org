@@ -37,4 +37,13 @@ describe('Auth', () => {
     expect(res.status).toBe(200)
     expect(res.body.token).toBeDefined()
   })
+
+  test('POST /api/auth/login con credenciales incorrectas → 401', async () => {
+  const res = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'test@test.ic', password: 'wrongpassword' })
+  expect(res.status).toBe(401)
+})
+
+  
 })

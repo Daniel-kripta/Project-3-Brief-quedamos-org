@@ -4,15 +4,22 @@ export default function Info() {
   const [html, setHtml] = useState(null);
 
   useEffect(() => {
-    fetch(
-      "https://api.github.com/repos/Daniel-kripta/Project-3-Brief-quedamos-org/readme",
-      {
-        headers: { Accept: "application/vnd.github.html+json" },
-      },
-    )
-      .then((r) => r.text())
-      .then(setHtml);
-  }, []);
+  const cached = sessionStorage.getItem('readme-html')
+  if (cached) {
+    setHtml(cached)
+    return
+  }
+  fetch(
+    'https://api.github.com/repos/Daniel-kripta/Project-3-Brief-quedamos-org/readme',
+    { headers: { Accept: 'application/vnd.github.html+json' } }
+  )
+    .then(r => r.text())
+    .then(html => {
+      sessionStorage.setItem('readme-html', html)
+      setHtml(html)
+    })
+}, [])
+
 
   return (
     <>

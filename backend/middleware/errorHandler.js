@@ -4,8 +4,13 @@ const errorHandler = (err, req, res, next) => {
   if (err.code === 'P2002') {
     return res.status(409).json({ error: 'Resource already exist' })
   }
+  
   if (err.code === 'P2025') {
     return res.status(404).json({ error: 'Resource not found' })
+  }
+
+  if (err.code === 'P2003') {
+    return res.status(404).json({ error: 'Related resource not found' })
   }
 
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' })
