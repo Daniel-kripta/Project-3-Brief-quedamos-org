@@ -43,7 +43,7 @@ export default function Login(){
                 </label>
                 <label>
                     <span>Contraseña: </span>
-                    <input type="password" name="password" value={form.password} onChange={handleChange} required />
+                    <input type="password" name="password" value={form.password} onChange={handleChange} minLength="6" required />
                 </label>
                 <button type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
                 <p>¿No tienes cuenta? <Link to="/register">Regístrate</Link></p>

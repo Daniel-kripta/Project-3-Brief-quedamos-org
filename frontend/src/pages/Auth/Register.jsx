@@ -4,7 +4,7 @@ import { useApi } from "../../hooks/useApi"
 import styles from "./AuthForm.module.css"
 
 export default function Register() {
-    const [form, setForm] = useState({ name: "", email: "", password: "", role: "USER" })
+    const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "USER" })
     const navigate = useNavigate()
     const { request, loading, error } = useApi()
 
@@ -12,6 +12,10 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (form.password !== form.confirmPassword) {
+        return alert('Las contraseñas no coinciden')
+    }
+
         try {
             await request("/api/auth/register", {
                 method: "POST",
@@ -36,8 +40,13 @@ export default function Register() {
                 </label>
                 <label>
                     <span>Contraseña:</span>
-                    <input type="password" name="password" value={form.password} onChange={handleChange} required />
+                    <input type="password" name="password" value={form.password} onChange={handleChange} minLength={6} required />
                 </label>
+                <label>
+                    <span>Confirmar contraseña:</span>
+                    <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} minLength={6} required />
+                </label>
+
                 <label>
                     <span>Rol:</span>
                     <select name="role" value={form.role} onChange={handleChange} style={{width: "70%"}}>
