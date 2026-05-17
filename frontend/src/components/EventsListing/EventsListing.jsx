@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import EventCard from "../EventCard/EventCard"
 import API_URL from "../../api/config"
 import style from "./EventsListing.module.css"
+import LoadingDots from "../UI/LoadingDots/LoadingDots"
 
 export default function EventsListing() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -75,7 +76,7 @@ export default function EventsListing() {
                 <button onClick={handleClear}>Limpiar filtros</button>
             </div>
 
-            {loading && <p>Cargando...</p>}
+            {loading && <LoadingDots/> }
             {!loading && events.length === 0 && <p>No hay eventos con estos filtros.</p>}
             <div className={style.grid}>
                 {events.map(event => (

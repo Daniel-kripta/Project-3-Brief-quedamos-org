@@ -1,11 +1,11 @@
-# uso de IA — quedamos.org
+# Documentación del uso de IA — quedamos.org
 
 **Herramienta utilizada:** Claude (claude-sonnet-4-6) via Claude Code CLI, Gemini y Perplexity
 **Modalidad:** Par de programación interactivo. Yo escribo todo el código; Claude explica conceptos, revisa errores y orienta en decisiones arquitectónicas.
-**Actualizado:** 15/05/2026
-**Rresumen:** Durante el desarrollo del proyecto, he integrado diversas herramientas de IA (Claude, Gemini y Perplexity) bajo una modalidad de "par de programación interactiva". La estrategia principal consistió en utilizar a Gemini para la gestión inicial de contextos extensos y planificación arquitectónica, mientras que Claude se convirtió en el compañero diario para la implementación técnica. En cada sesión, prioricé que la IA explicara los conceptos lógicos y patrones de diseño (como el patrón singleton en Prisma, middlewares en Express o el uso de *hooks* en React) antes de proceder a la escritura manual del código, asegurando así que cada funcionalidad implementada estuviera respaldada por una comprensión teórica.
+**Actualizado:** 17/05/2026
+**Resumen:** Durante el desarrollo del proyecto, he integrado diversas herramientas de IA (Claude, Gemini y Perplexity) bajo una modalidad de "par de programación interactiva". La estrategia principal consistió en utilizar a Gemini para la gestión inicial de contextos extensos y planificación arquitectónica, mientras que Claude se convirtió en el compañero diario para la implementación técnica. En cada sesión, prioricé que la IA explicara los conceptos lógicos y patrones de diseño (como el patrón singleton en Prisma, middlewares en Express o el uso de *hooks* en React) antes de proceder a la escritura manual del código, asegurando así que cada funcionalidad implementada estuviera respaldada por una comprensión teórica.
 
-Este flujo de trabajo permitió optimizar tiempos en tareas repetitivas, como la generación de archivos de test de integración con Vitest o la creación de un *seed* de datos robusto, además de facilitar el despliegue continuo en Railway y Vercel. A lo largo del proceso, mantuve un control crítico sobre las sugerencias de la IA, descartando propuestas que se alejaban de la filosofía del proyecto —como el uso de redes sociales o campos innecesarios en la base de datos— y rectificando el rumbo cuando la complejidad del código generado excedía mi capacidad de asimilación. El resultado ha sido un desarrollo ágil y consciente, donde la IA ha actuado como un tutor técnico que me ha permitido centrarme en las decisiones de producto y en la calidad del resultado final. En el proceso he aprendido bastantes cosas y la metodología de par de programación es hasta ahora el que mejor me ha funcionado.
+Este flujo de trabajo permitió optimizar tiempos en tareas repetitivas, como la generación de archivos de test de integración con Vitest o la creación de un *seed* de datos robusto, además de facilitar el despliegue continuo en Railway y Vercel. A lo largo del proceso, mantuve un control crítico sobre las sugerencias de la IA, descartando propuestas que se alejaban de la filosofía del proyecto —como el uso de redes sociales o campos innecesarios en la base de datos— y rectificando el rumbo cuando la complejidad del código generado excedía mi capacidad de asimilación. Por último, se empleó las últimas horas de desarrollo ha pulir y testear el proyecto. El resultado ha sido un desarrollo ágil y consciente, donde la IA ha actuado como un tutor técnico que me ha permitido centrarme en las decisiones de producto y en la calidad del resultado final. En el proceso he aprendido bastantes cosas y la metodología de par de programación es hasta ahora el que mejor me ha funcionado.
 
 # Log de uso de IA
 ---
@@ -172,6 +172,27 @@ Este flujo de trabajo permitió optimizar tiempos en tareas repetitivas, como la
 - **Qué obtuve:** Proyecto muy avanzado ya. EL sistema descartado era funcional y fue almacenado para continuar desde ahí tras el proyecto del bootcamp, con más tiempo para asimilar el código.
 - **Qué modifiqué o descarté:**
   - Se descartó el sistema desarrollado, ya comentado.
+- **Tiempo con IA:** 390 min | **Tiempo sin IA (estimado):** ___
 - **Aprendizaje:**
   - El sistema de pedir código y luego intentar entenderlo para replicarlo no es viable con niveles de complejidad avanzados.
   - Es importante seguir trabajando sobre necesidades concretas y poder reorientar las decisiones que pueda tomar la IA como se ha hecho durante estas semanas.
+
+---
+
+## 2026-05-15/16 — CSS completo + polish + nuevos endpoints + pulido final (Día 7-8)
+
+- **Herramienta:** Claude (claude-sonnet-4-6)
+- **Contexto:** Jornada de dos días dedicada a completar el CSS de todas las páginas funcionales, mejorar la UX y añadir dos endpoints de backend que el frontend necesitaba. El objetivo era tener una versión presentable y funcionando de extremo a extremo. También se trabajó arreglando bugs en la lógica y cerrando el proyecto.
+- **Cómo se usó:** Rol consultivo para dudas puntuales técnicas de CSS y algún consejo para implementar las decisiones propias para layout y diseño. Para el backend, Claude explicó el uso de `distinct` en Prisma antes de implementar el endpoint de áreas. Se usó para ampliar los tests y para dotar de contenido a las páginas estáticas del footer.
+- **Qué obtuve:**
+  - Backend: `GET /api/events/areas` (áreas únicas con eventos usando `distinct`) y `GET /api/events/:id/attend` (comprueba si el usuario autenticado asiste, devuelve booleano).
+  - Frontend CSS: `EventForm.module.css` con toggles de 3 posiciones para Precio/Espacio, pills para tags y separación de fecha/hora en inputs independientes; `Dashboard.module.css` y `Admin.module.css` con tabla responsive que apila filas en móvil usando `data-label`.
+  - Frontend funcionalidad: post-login redirect a la ruta de origen; filtrado de eventos pasados y con aforo completo en el listado; áreas cargadas dinámicamente desde la API; botón "Voy" deshabilitado con texto "Aforo completo" cuando el evento está lleno; preview de imagen en tiempo real en `EventForm`; imagen aleatoria de Picsum como valor por defecto; botón `+` circular en Navbar para ORGANIZER/ADMIN; `vercel.json` con rewrites para evitar 404 al recargar la página en Vercel.
+- **Qué modifiqué o descarté:**
+  - El check de asistencia en `EventDetail` pasó de cargar todas las asistencias del user a usar el nuevo endpoint `GET /:id/attend`, más eficiente y semánticamente correcto, tal y como recomendó una auditoría de Gemini.
+  - `container-type: inline-size` añadido al elemento `main` para que `cqw` tome como referencia el contenedor y no el viewport.
+- **Tiempo con IA:** 720 min | **Tiempo sin IA (estimado):** 900 min
+- **Aprendizaje:**
+  - Entendí que `cqw` solo funciona si hay un ancestro con `container-type: inline-size` — sin él cae al viewport como referencia.
+  - Aprendí el patrón de tabla responsive con `data-label`: en móvil se ocultan los `<th>` y cada `<td>` muestra su etiqueta con `::before { content: attr(data-label) }`, sin duplicar HTML.
+  - Entendí que `distinct` en Prisma no devuelve el campo directamente como array sino que hay que mapearlo: `prisma.event.findMany({ distinct: ['area'], select: { area: true } }).then(r => r.map(e => e.area))`.

@@ -32,10 +32,10 @@ const getEvents = async (req, res, next) => {
 }
 
 const getEvent = async (req, res, next) => {
-    const {id} = req.params
+    
     try{
         const event = await prisma.event.findUnique({
-            where: {id: Number(id)},
+            where: {id: req.id},
             include: {
                 category: true,
                 specialTags: true,
@@ -89,12 +89,12 @@ const createEvent = async (req, res, next) => {
 }
 
 const updateEvent = async (req, res, next) => {
-    const {id} = req.params
+    
     const {title, description, date, location, area, maxCapacity, minCapacity, imageUrl, categoryId, tags, specialTagIds, registrationOpensAt, registrationClosesAt} = req.body
 
     try{
         const event = await prisma.event.findUnique({
-            where: {id: Number(id)},
+            where: {id: req.id},
             
 
         })
@@ -103,7 +103,7 @@ const updateEvent = async (req, res, next) => {
     
 
     const updated = await prisma.event.update({
-        where: {id: Number(id)},
+        where: {id: req.id},
         data: {
             title,
             description,
@@ -128,10 +128,9 @@ const updateEvent = async (req, res, next) => {
 }
 
 const deleteEvent = async (req, res, next) => {
-    const { id } = req.params
-
+    
     try {
-        const event = await prisma.event.findUnique({ where: { id: Number(id) } })
+        const event = await prisma.event.findUnique({ where: { id: req.id } })
 
         if (!event) return res.status(404).json({ error: 'Event not found' })
 
@@ -140,8 +139,8 @@ const deleteEvent = async (req, res, next) => {
         }
 
         // se borran las asistencias antes que el evento para evitar referencias huérfanas en la BD
-        await prisma.attendance.deleteMany({ where: { eventId: Number(id) } })
-        await prisma.event.delete({ where: { id: Number(id) } })
+        await prisma.attendance.deleteMany({ where: { eventId: req.id } })
+        await prisma.event.delete({ where: { id: req.id } })
 
         res.json({ message: 'Event deleted' })
     } catch (err) {
@@ -151,18 +150,16 @@ const deleteEvent = async (req, res, next) => {
 
 const attendEvent = async (req, res, next) => {
 
-    const { id } = req.params
-
     try {
     const event = await prisma.event.findUnique({ 
-        where: { id: Number(id) }, 
+        where: { id: req.id }, 
         include: {_count: {select: {attendances: true}}}  })
 
     if (!event) return res.status(404).json({ error: 'Event not found' })
     if (event.maxCapacity !== null && event._count.attendances >= event.maxCapacity) return res.status(400).json({ error: 'Event is full' })
     
 
-    await prisma.attendance.create({ data: { userId: req.user.id, eventId: Number(id) } })
+    await prisma.attendance.create({ data: { userId: req.user.id, eventId: req.id } })
 
     // nodemailer — sin await para que el email no retrase la respuesta al cliente
     if (process.env.EMAIL_USER) {  
@@ -193,11 +190,9 @@ const attendEvent = async (req, res, next) => {
 
 const cancelAttendance = async (req, res, next) => {
 
-    const { id } = req.params
-
     try{
     await prisma.attendance.delete({
-    where: { userId_eventId: { userId: req.user.id, eventId: Number(id) } }
+    where: { userId_eventId: { userId: req.user.id, eventId: req.id } }
 })
     res.json({message: "Attendance cancelled"})
     } catch (err) {
@@ -220,10 +215,10 @@ const getAreas = async (req, res, next) => {
 }
 
 const checkAttendance = async (req, res, next) => {
-    const { id } = req.params
+    
     try {
         const attendance = await prisma.attendance.findUnique({
-            where: { userId_eventId: { userId: req.user.id, eventId: Number(id) } }
+            where: { userId_eventId: { userId: req.user.id, eventId: req.id } }
         })
         res.json({ attending: !!attendance })
     } catch (err) {

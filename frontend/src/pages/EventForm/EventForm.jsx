@@ -146,7 +146,7 @@ export default function EventForm() {
         <div className={styles.dateGroup}>
           <span>Fecha</span>
           <div className={styles.dateRow}>
-            <input type="date" name="date" value={form.date} onChange={handleChange} required />
+            <input type="date" name="date" min={today} value={form.date} onChange={handleChange} required />
             <input type="time" name="time" value={form.time} onChange={handleChange} required />
           </div>
         </div>

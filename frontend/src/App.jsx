@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import ProtectedRoute from "./routes/ProtectedRoute"
 
 import Home from "./pages/Home/Home"
@@ -12,6 +12,9 @@ import NotFoundPage from "./pages/NotFoundPage/NotFoundPage"
 
 import Header from "./components/Header/Header"
 import Footer from "./components/Footer/Footer"
+import StaticPage from "./pages/StaticPage/StaticPage"
+import Info from "./pages/Info/Info"
+import ContactPage from "./pages/ContactPage/ContactPage"
 
 export default function App() {
   return (
@@ -19,6 +22,10 @@ export default function App() {
       <Header />
       <main>
         <Routes>
+          <Route path="/info/sobre-el-proyecto" element={ <Info/> } />
+          <Route path="/info/contacto" element={<ContactPage />} />
+          <Route path="/info/:slug" element={<StaticPage/>} />
+          <Route path="/info" element={ <Navigate to="/info/sobre-el-proyecto" />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

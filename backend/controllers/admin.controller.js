@@ -40,10 +40,10 @@ const getAllEvents = async (req, res, next) => {
 }
 
 const deleteUser = async (req, res, next) => {
-    const {id} = req.params
+    
     try{
         const user = await prisma.user.findUnique({
-            where: { id: Number(id)},
+            where: { id: req.id},
             include: {
                 events: true,
                 attendances: true}
@@ -55,10 +55,10 @@ const deleteUser = async (req, res, next) => {
             return res.status(403).json({ error: "Cannot delete an admin"})
         }
 
-        await prisma.attendance.deleteMany({ where: { userId: Number(id)}})
-        await prisma.attendance.deleteMany({ where: { event: { organizerId: Number(id)}}})
-        await prisma.event.deleteMany({ where: { organizerId: Number(id)}})
-        await prisma.user.delete({ where: {id: Number(id)}})
+        await prisma.attendance.deleteMany({ where: { userId: req.id}})
+        await prisma.attendance.deleteMany({ where: { event: { organizerId: req.id}}})
+        await prisma.event.deleteMany({ where: { organizerId: req.id}})
+        await prisma.user.delete({ where: {id: req.id}})
     res.json({ message: "User deleted"})
     } catch (err) {
         next(err)

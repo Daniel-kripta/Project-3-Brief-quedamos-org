@@ -1,0 +1,9 @@
+const validateId = (req, res, next) => {
+    const id = Number(req.params.id)
+    
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid id'})
+    req.id = id
+    next()
+}
+
+module.exports = validateId

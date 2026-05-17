@@ -1,0 +1,75 @@
+.container {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 20px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+@container (min-width: 480px) {
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        align-items: start;
+    }
+
+    .container h1 {
+        grid-column: 1 / -1;
+    }
+
+    .map {
+        grid-row: 2;
+        grid-column: 2;
+    }
+
+    .info {
+        grid-row: 2;
+        grid-column: 1;
+    }
+}
+
+.container h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #d0d4d8;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+}
+
+.infoItem a {
+    text-decoration: underline;
+}
+
+.map {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.osmLink {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    text-decoration: underline;
+    align-self: flex-end;
+}

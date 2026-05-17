@@ -1,0 +1,22 @@
+.container {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 20px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.container h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #d0d4d8;
+}
+
+.container p {
+    line-height: 1.7;
+    text-align: justify;
+    color: var(--color-secundary);
+    opacity: 0.85;
+}

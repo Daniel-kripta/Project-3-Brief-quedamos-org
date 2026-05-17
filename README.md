@@ -1,6 +1,6 @@
 # quedamos.org
 
-Plataforma web ética para centralizar la gestión de eventos y fomentar el encuentro social físico en Canarias.
+Plataforma web ética para centralizar la gestión de eventos y fomentar el encuentro social físico en el contexto territorial de Canarias.
 
 **Project 3 · Ironhack Fullstack Bootcamp · Mayo 2026**
 
@@ -9,6 +9,7 @@ Plataforma web ética para centralizar la gestión de eventos y fomentar el encu
 ## Índice
 
 - [Qué es quedamos.org](#qué-es-quedamosorg)
+- [Screenshots](#screenshots)
 - [Demo](#demo)
 - [Quick start](#quick-start)
 - [Variables de entorno](#variables-de-entorno)
@@ -21,15 +22,15 @@ Plataforma web ética para centralizar la gestión de eventos y fomentar el encu
 - [Complicaciones y resoluciones](#complicaciones-y-resoluciones)
 - [Resumen del uso de IA en el desarrollo](#resumen-del-uso-de-ia-en-el-desarrollo)
 - [Tiempos de desarrollo](#tiempos-de-desarrollo)
-- [Mejoras futuras](#mejoras-futuras)
+- [Backlog — Fase 2 y mejoras futuras](#backlog--fase-2-y-mejoras-futuras)
 
 ---
 
 ## Qué es quedamos.org
 
-quedamos.org forma parte de un proyecto social destinado a mejorar la calidad de vida de las personas a través de la reconstrucción del tejido social en Canarias. La plataforma facilita la gestión de eventos para entidades sociales al tiempo que ayuda a encontrar espacios de encuentro atendiendo a la diversidad de las personas — sin algoritmos, sin perfiles invasivos, sin dark patterns.
+quedamos.org forma parte de un proyecto social destinado a mejorar la calidad de vida de las personas a través del fortalecimiento del tejido social. La plataforma facilita la gestión de eventos para entidades sociales y a particulares, al tiempo que ayuda a encontrar espacios de encuentro atendiendo a la diversidad de las personas — sin algoritmos, sin perfiles invasivos, sin dark patterns.
 
-El MVP (Fase 1) cubre:
+El MVP (Fase 1) corresponde a un proyecto de bootcamp y cubre:
 
 - Registro y login con roles diferenciados (`USER`, `ORGANIZER`, `ADMIN`)
 - Descubrir y filtrar eventos por área, categoría y fecha
@@ -40,13 +41,28 @@ El MVP (Fase 1) cubre:
 
 **Qué NO hace el MVP:** no organiza ni asume responsabilidad por eventos, no construye perfiles con foto, no funciona como red social de consumo continuo, no recopila datos sensibles.
 
+Para la fundamentación académica del proyecto y la justificación de las decisiones de diseño, ver [Fundamentación_APP.md](Fundamentación_APP.md).
+
+---
+
+## Screenshots
+
+<p>
+  <img src="frontend/src/assets/screenshots/home_screenshot.png" width="45%" />
+  <img src="frontend/src/assets/screenshots/eventDetail_screenshot.png" width="45%" />
+</p>
+
+<p>
+  <img src="frontend/src/assets/screenshots/home-desktop_screenshot.png" width="92%" />
+</p>
+
 ---
 
 ## Demo
 
 | Servicio | URL |
 |---------|-----|
-| Frontend (Vercel) | _pendiente de deploy_ |
+| Frontend (Vercel) | https://quedamos-org.vercel.app |
 | API (Railway) | https://project-3-brief-quedamos-org-production.up.railway.app |
 
 Credenciales de prueba:
@@ -129,12 +145,14 @@ npm run build  # build de producción
 ```
 Request
   → Routes (mapeo HTTP)
-  → Middleware: verifyToken / requireRole / validate(schema)
+  → Middleware: validateId / verifyToken / requireRole / validate(schema)
   → Controller (lógica de negocio)
   → Prisma Client
   → PostgreSQL
   → errorHandler (P2002→409, P2025→404, resto→500)
 ```
+
+`validateId` valida que `req.params.id` sea un entero y lo adjunta como `req.id`. Va antes de `verifyToken` porque la validación del id es más barata que la verificación criptográfica del JWT.
 
 ### Frontend
 
@@ -150,8 +168,11 @@ Request
 | `/events/new` | EventForm | ORGANIZER / ADMIN |
 | `/events/:id/edit` | EventForm | ORGANIZER / ADMIN |
 | `/admin` | Admin | Solo ADMIN |
+| `/info/sobre-el-proyecto` | Info | Pública |
+| `/info/contacto` | ContactPage | Pública |
+| `/info/:slug` | StaticPage | Pública |
 
-**Estado global:** Context API — solo `AuthContext` en el MVP: usuario, token, login, logout, cargando.
+**Estado global:** Context API — solo `AuthContext` en el MVP: user, token, login, logout, cargando.
 
 **Hook principal:** `useApi` — encapsula fetch con token automático desde localStorage, estados `loading` y `error`.
 
@@ -210,7 +231,7 @@ Request
 |--------|------|------|-------------|
 | GET | `/api/categories` | No | Listar todas las categorías |
 
-### Usuario actual — `/api/users`
+### User actual — `/api/users`
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
@@ -221,9 +242,9 @@ Request
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| GET | `/api/admin/users` | ADMIN | Listar todos los usuarios |
+| GET | `/api/admin/users` | ADMIN | Listar todos los users |
 | GET | `/api/admin/events` | ADMIN | Listar todos los eventos |
-| DELETE | `/api/admin/users/:id` | ADMIN | Borrar usuario |
+| DELETE | `/api/admin/users/:id` | ADMIN | Borrar user |
 
 ---
 
@@ -234,20 +255,31 @@ cd backend
 npm test
 ```
 
-8 tests de integración con Vitest + Supertest:
+19 tests de integración con Vitest + Supertest (cobertura de líneas: 88.88%):
 
-| # | Test | Resultado esperado |
-|---|------|-------------------|
-| 1 | POST /api/auth/register con datos válidos | 201 |
-| 2 | POST /api/auth/register con email duplicado | 409 |
-| 3 | POST /api/auth/login con credenciales correctas | 200 + token |
-| 4 | GET /api/events sin auth | 200 |
-| 5 | POST /api/events sin token | 401 |
-| 6 | POST /api/events con token de USER | 403 |
-| 7 | POST /api/events con token de ORGANIZER | 201 |
-| 8 | POST + DELETE /api/events/:id/attend | 201 y 200 |
+| # | Suite | Test | Resultado esperado |
+|---|-------|------|--------------------|
+| 1 | Auth | POST /api/auth/register con datos válidos | 201 + token |
+| 2 | Auth | POST /api/auth/register con email duplicado | 409 |
+| 3 | Auth | POST /api/auth/login con credenciales correctas | 200 + token |
+| 4 | Events | GET /api/events sin auth | 200 |
+| 5 | Events | POST /api/events sin token | 401 |
+| 6 | Events | POST /api/events con token USER | 403 |
+| 7 | Events | POST /api/events con token ORGANIZER | 201 |
+| 8 | Events | POST + DELETE /api/events/:id/attend | 201 y 200 |
+| 9 | Events | GET /api/events/areas sin auth | 200 |
+| 10 | Events | GET /api/events/abc (id no numérico) | 400 |
+| 11 | Events | GET /api/events/:id/attend con token | 200 |
+| 12 | Events | GET /api/categories sin auth | 200 |
+| 13 | Events | GET /api/users/me/attendances con token | 200 |
+| 14 | Events | GET /api/users/me/events con token ORGANIZER | 200 |
+| 15 | Events | PUT /api/events/:id con token ORGANIZER | 200 |
+| 16 | Events | GET /api/admin/users con token ADMIN | 200 |
+| 17 | Events | GET /api/admin/events con token ADMIN | 200 |
+| 18 | Events | DELETE /api/events/:id con token ORGANIZER | 200 |
+| 19 | Events | DELETE /api/admin/users/:id con token ADMIN | 200 |
 
-Se optó por no seguir TDD: con 8 días de desarrollo y evaluación centrada en funcionalidad, los tests se escriben al final para verificar el comportamiento implementado, no para guiarlo.
+Se optó por no seguir TDD por la magnitud del proyecto.
 
 ---
 
@@ -255,12 +287,12 @@ Se optó por no seguir TDD: con 8 días de desarrollo y evaluación centrada en 
 
 | Capa | Tecnología |
 |------|-----------|
-| Frontend | React 18 + Vite |
-| Routing | React Router v6 |
+| Frontend | React 19 + Vite |
+| Routing | React Router v7 |
 | Estado global | Context API |
 | HTTP client | fetch nativo |
 | Estilos | CSS Modules |
-| Backend | Node.js + Express |
+| Backend | Node.js + Express 5 |
 | ORM | Prisma 5 |
 | Base de datos | PostgreSQL |
 | Autenticación | JWT — 7 días de expiración |
@@ -283,50 +315,61 @@ Se optó por no seguir TDD: con 8 días de desarrollo y evaluación centrada en 
 
 **`fileParallelism: false` en Vitest.** Dos suites compartiendo la misma BD generan condiciones de carrera. Solución: deshabilitar la ejecución paralela de archivos de test.
 
-**Ordenación de rutas en Express.** `GET /events/areas` después de `GET /events/:id` hace que Express trate "areas" como un id. Solución: las rutas estáticas siempre antes que las dinámicas.
+**Ordenación de rutas en Express.** `GET /events/areas` después de `GET /events/:id` hace que Express trate "areas" como un id. Solución: las rutas estáticas siempre antes que las dinámicas. El mismo principio aplica en React Router.
 
 **`cqw` referenciando el viewport en lugar de `main`.** Sin un ancestro con `container-type`, `cqw` cae al viewport. Solución: añadir `container-type: inline-size` al elemento `main` en `index.css`.
+
+**`fetch` no lanza error en respuestas 4xx/5xx.** A diferencia de axios, `fetch` solo rechaza la promesa ante errores de red. Para manejar errores HTTP hay que comprobar `response.ok` manualmente antes de procesar la respuesta.
 
 ---
 
 ## Resumen del uso de IA en el desarrollo
 
-**Claude (claude-sonnet-4-6)** vía Claude Code CLI — par de programación durante todo el desarrollo. Daniel escribe todo el código; Claude explica conceptos, revisa errores, advierte sobre decisiones arquitectónicas y guía la resolución de bugs. El log completo de uso está en [ai_log.md](ai_log.md).
+Durante el desarrollo integré Claude, Gemini y Perplexity como par de programación. Escribí la mayoría del código yo; la metodología más habitual fue: la IA explicaba cada concepto antes de implementarlo, revisaba errores y orientaba decisiones arquitectónicas. Mantuve el control crítico sobre las propuestas, descartando las que no encajaban con la filosofía del proyecto. El log completo, sesión por sesión, está en [Documentacion_IA.md](Documentacion_IA.md).
 
 ---
 
 ## Tiempos de desarrollo
 
+Los tiempos de desarrollo se ciñen a los minutos efectivos empleados para cada bloque.
+
 | Día | Bloque | Estimado | Real |
 |-----|--------|---------|------|
-| 0 | Prework + Prebloques | — | 255 min |
+| 0 | Prework + Prebloques | — | 265 min |
 | 1 | Setup + Auth backend | 275 min | 258 min |
 | 2 | CRUD eventos + asistencias | 240 min | 195 min |
-| 3 | Admin + integración + tests | 265 min | 126 min |
+| 3 | Admin + integración + tests + deploy | 265 min | 455 min |
 | 4 | Frontend setup + auth + rutas | 240 min | 321 min |
-| 5 | Layout + componentes + deploy | 240 min | — |
-| 6 | Páginas funcionales + recogida de cable | 240 min | — |
-| 7 | CSS + responsive + polish | 240 min | — |
-| 8 | Bugs + README + presentación | 300 min | — |
-| **Total** | | **~2100 min (~35h)** | — |
+| 5 | Layout + componentes + deploy + schema v2 | — | 475 min |
+| 6 | Páginas funcionales + reformulación del proyecto | — | 390 min |
+| 7-8 | CSS + polish + validateId + páginas estáticas + tests | — | 720 min |
+| **Total** | | | **~3.079 min (~51h 20min)** |
 
 ---
 
-## Mejoras futuras
+## Backlog — Fase 2 y mejoras futuras
 
-### Backend
+El proyecto social quedamos.org está concebido para crecer por fases. Actualmente se plantean 4. Lo que sigue es el backlog de funcionalidades planificadas consecutivas a la fase 1 que termina con este MVP.
 
-- [ ] Validar que `req.params.id` es numérico — `Number('abc')` devuelve `NaN` y el errorHandler responde 500 en lugar de 400.
-- [ ] Sustituir Gmail por Resend o SendGrid en producción.
-- [ ] Endpoint de reset de contraseña para admin (`POST /api/admin/users/:id/reset-password`).
-- [ ] Filtrar usuarios por rol en el backend (`?role=USER`) en lugar de hacerlo en el frontend.
+### Mejoras técnicas (sin fase asignada)
 
-### Base de datos
+- **Soft delete de users** — marcar con `deletedAt` en lugar de borrado en cascada, para preservar el historial de eventos y asistencias. Mejora la experiencia de organizers y users que quieran o deban tener una memoria de eventos.
+- **Sustituir Gmail por Resend o SendGrid** en producción — Gmail con contraseña de aplicación es frágil. Resend y SendGrid tienen plan gratuito y no requieren configuración especial. Implementado en gmail para el proyecto bootcamp.
+- **Filtrar usuario por rol en el backend** (`?role=USER`) en lugar de hacerlo en el frontend.
+- **Endpoint de reset de contraseña para admin** (`POST /api/admin/users/:id/reset-password`). Actualmente si un user pierde su contraseña (o acceso a correo cuando se implemente método de recuperación) no hay forma de recuperarlo administrativamente.
+- **Recuento de asistencias en panel de admin** — añadir `_count: { select: { attendances: true } }` a `getAllUsers` para que el admin vea cuántos eventos confirma cada persona.
+- **Exportar a calendario** — generar `.ics` al confirmar asistencia para añadir el evento al calendario personal sin depender de ninguna plataforma externa.
+- **Buscador por texto libre** — buscar por palabras en título y descripción, sin depender solo de categorías. Funcionalidad de Prisma no usada para el MVP.
 
-- [ ] **Soft delete**: marcar usuarios como eliminados (`deletedAt`) en lugar de borrado en cascada, para preservar el historial de eventos y asistencias.
-- [ ] Migrar `role` de campo único a relación many-to-many (Fase 2) para permitir que una persona sea USER y ORGANIZER simultáneamente.
+### Fase 2 — Coordinación social
 
-### Frontend
-
-- [ ] Páginas estáticas institucionales: `/sobre-el-proyecto`, `/privacidad`, `/contacto`, `/denuncias`, `/accesibilidad`, `/aviso-legal`.
-- [ ] Página de perfil de usuario con gestión de preferencias (`preferredZones`, `preferredCategoryIds`, etc.) — Fase 2.
+- **Modo "busco compañía"** — marcar que quieres ir pero prefieres ir en compañía.
+- **Compartir transporte** — opción "quiero compartir transporte", coincidencia por proximidad, propuesta de trayectos compartidos.
+- **Sistema de reserva previa** — marcar interés antes de que abran las inscripciones para recibir aviso cuando se abran.
+- **Lista de espera** — apuntarse si el aforo está completo.
+- **Historial privado de asistencias** — registro visible solo para la persona usuaria, para recordar a qué eventos fue.
+- **Newsletter semanal opt-in** — resumen según los filtros configurados en el perfil. Opt-in explícito, nunca por defecto.
+- **Perfil de entidad** — página mínima: nombre, descripción, tipo, municipio y lista de eventos activos.
+- **Historial del organizer** — vista de eventos pasados propios, exportable. Solo visible para propio organizer.
+- **Vista de mapa** — eventos sobre un mapa de Gran Canaria con Leaflet + OpenStreetMap (sin tracking, sin API key, coherente con la filosofía de privacidad del proyecto).
+- **Identificación obligatoria de entidades** — DNI/CIF para publicar eventos. Requisito de seguridad a largo plazo.

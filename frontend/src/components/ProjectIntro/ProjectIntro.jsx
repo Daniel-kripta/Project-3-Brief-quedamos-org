@@ -13,8 +13,8 @@ export default function ProjectIntro() {
                     <p>
                         quedamos.org forma parte de un proyecto social destinado a mejorar la calidad de vida
                         de las personas a través de la reconstrucción del tejido social. La plataforma facilita
-                        la gestión de eventos para entidades sociales al tiempo que ayuda a encontrar espacios
-                        de encuentro atendiendo a la diversidad de las personas.
+                        la gestión de eventos para entidades sociales y a particulares, al tiempo que ayuda a
+                        encontrar espacios de encuentro atendiendo a la diversidad de las personas.
                     </p>
                     <p>
                         Parte de un compromiso claro con la ética digital: sin patrones oscuros, sin algoritmos
@@ -28,12 +28,14 @@ export default function ProjectIntro() {
                         y pequeños comercios visibilicen sus iniciativas más allá de sus redes habituales.
                     </p>
                     <p>
-                        En esta primera fase se implementa un MVP de demostración técnica básica, por lo que
-                        la mayoría de funcionalidades se irán añadiendo durante el desarrollo.
+                        Esta es la Fase 1 de un proyecto concebido para crecer. Cubre los casos de uso
+                        centrales: descubrir y filtrar eventos, confirmar asistencia, y gestionar eventos
+                        propios como entidad organizadora. Las fases siguientes incorporarán coordinación
+                        social, funcionalidades de accesibilidad y un ecosistema de servicios más amplio.
                     </p>
                 </>
             )}
-            <Link to="/sobre-el-proyecto" className={styles.link}>Saber más sobre el proyecto</Link>
+            <Link to="/info/sobre-el-proyecto" className={styles.link}>Saber más sobre el proyecto</Link>
         </div>
     )
 }
