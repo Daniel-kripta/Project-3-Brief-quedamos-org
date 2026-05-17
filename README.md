@@ -149,10 +149,12 @@ Request
   → Controller (lógica de negocio)
   → Prisma Client
   → PostgreSQL
-  → errorHandler (P2002→409, P2025→404, resto→500)
+  → errorHandler (P2002→409, P2025→404, P2003→404, resto→500)
 ```
 
 `validateId` valida que `req.params.id` sea un entero y lo adjunta como `req.id`. Va antes de `verifyToken` porque la validación del id es más barata que la verificación criptográfica del JWT.
+
+`authLimiter` protege `POST /api/auth/login` y `POST /api/auth/register` — máximo 10 peticiones por IP en 15 minutos (express-rate-limit).
 
 ### Frontend
 
@@ -255,29 +257,31 @@ cd backend
 npm test
 ```
 
-19 tests de integración con Vitest + Supertest (cobertura de líneas: 88.88%):
+21 tests de integración con Vitest + Supertest (cobertura de líneas: 89.88%):
 
 | # | Suite | Test | Resultado esperado |
 |---|-------|------|--------------------|
 | 1 | Auth | POST /api/auth/register con datos válidos | 201 + token |
 | 2 | Auth | POST /api/auth/register con email duplicado | 409 |
 | 3 | Auth | POST /api/auth/login con credenciales correctas | 200 + token |
-| 4 | Events | GET /api/events sin auth | 200 |
-| 5 | Events | POST /api/events sin token | 401 |
-| 6 | Events | POST /api/events con token USER | 403 |
-| 7 | Events | POST /api/events con token ORGANIZER | 201 |
-| 8 | Events | POST + DELETE /api/events/:id/attend | 201 y 200 |
-| 9 | Events | GET /api/events/areas sin auth | 200 |
-| 10 | Events | GET /api/events/abc (id no numérico) | 400 |
-| 11 | Events | GET /api/events/:id/attend con token | 200 |
-| 12 | Events | GET /api/categories sin auth | 200 |
-| 13 | Events | GET /api/users/me/attendances con token | 200 |
-| 14 | Events | GET /api/users/me/events con token ORGANIZER | 200 |
-| 15 | Events | PUT /api/events/:id con token ORGANIZER | 200 |
-| 16 | Events | GET /api/admin/users con token ADMIN | 200 |
-| 17 | Events | GET /api/admin/events con token ADMIN | 200 |
-| 18 | Events | DELETE /api/events/:id con token ORGANIZER | 200 |
-| 19 | Events | DELETE /api/admin/users/:id con token ADMIN | 200 |
+| 4 | Auth | POST /api/auth/login con credenciales incorrectas | 401 |
+| 5 | Events | GET /api/events sin auth | 200 |
+| 6 | Events | POST /api/events sin token | 401 |
+| 7 | Events | POST /api/events con token USER | 403 |
+| 8 | Events | POST /api/events con categoryId inexistente | 404 |
+| 9 | Events | POST /api/events con token ORGANIZER | 201 |
+| 10 | Events | POST + DELETE /api/events/:id/attend | 201 y 200 |
+| 11 | Events | GET /api/events/areas sin auth | 200 |
+| 12 | Events | GET /api/events/abc (id no numérico) | 400 |
+| 13 | Events | GET /api/events/:id/attend con token | 200 |
+| 14 | Events | GET /api/categories sin auth | 200 |
+| 15 | Events | GET /api/users/me/attendances con token | 200 |
+| 16 | Events | GET /api/users/me/events con token ORGANIZER | 200 |
+| 17 | Events | PUT /api/events/:id con token ORGANIZER | 200 |
+| 18 | Events | GET /api/admin/users con token ADMIN | 200 |
+| 19 | Events | GET /api/admin/events con token ADMIN | 200 |
+| 20 | Events | DELETE /api/events/:id con token ORGANIZER | 200 |
+| 21 | Events | DELETE /api/admin/users/:id con token ADMIN | 200 |
 
 Se optó por no seguir TDD por la magnitud del proyecto.
 
@@ -298,6 +302,7 @@ Se optó por no seguir TDD por la magnitud del proyecto.
 | Autenticación | JWT — 7 días de expiración |
 | Hash contraseñas | bcryptjs — 10 salt rounds |
 | Validación backend | Zod |
+| Rate limiting | express-rate-limit |
 | Tests | Vitest + Supertest |
 | Integración externa | nodemailer (Gmail) |
 | Deploy backend + BD | Railway (EU West) |

@@ -85,6 +85,14 @@ describe('Events', () => {
     expect(res.status).toBe(403)
   })
 
+  test('POST /api/events con categoryId inexistente - 404', async () => {
+  const res = await request(app)
+    .post('/api/events')
+    .set('Authorization', `Bearer ${organizerToken}`)
+    .send({ title: 'Test Event', description: 'Test description long enough', date: '2026-06-01T10:00:00.000Z', location: 'Test location', area: 'Test area', categoryId: 99999 })
+  expect(res.status).toBe(404)
+})
+
   test('POST /api/events con token ORGANIZER - 201', async () => {
     const category = await prisma.category.findUnique({ where: { slug: 'test' } })
     const res = await request(app)
