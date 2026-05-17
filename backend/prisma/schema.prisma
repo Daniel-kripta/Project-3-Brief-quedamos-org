@@ -65,6 +65,9 @@ model Event {
   organizer            User         @relation(fields: [organizerId], references: [id])
   attendances          Attendance[]
   specialTags          Tag[]
+  @@index([area])
+  @@index([categoryId])
+  @@index([date])
 }
 
 model Attendance {
