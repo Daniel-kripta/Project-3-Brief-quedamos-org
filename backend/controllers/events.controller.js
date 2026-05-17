@@ -3,7 +3,10 @@ const nodemailer = require('nodemailer')
 
 
 const getEvents = async (req, res, next) => {
-    const {area, categoryId, from, to} = req.query
+    const { area, categoryId, from, to, page, limit } = req.query
+    const pageNum = parseInt(page) || 1
+    const limitNum = parseInt(limit) || 9
+
     const where = {}
     if (area) where.area = area
     if (categoryId) where.categoryId = Number(categoryId)
@@ -25,7 +28,11 @@ const getEvents = async (req, res, next) => {
         const visible = events.filter(e =>
             e.maxCapacity === null || e._count.attendances < e.maxCapacity
         )
-        res.json(visible)
+        const total = visible.length
+        const totalPages = Math.ceil(total / limitNum) || 1
+        const data = visible.slice((pageNum - 1) * limitNum, pageNum * limitNum)
+
+        res.json({ data, total, page: pageNum, totalPages })
     }   catch (err) {
         next(err)
     }

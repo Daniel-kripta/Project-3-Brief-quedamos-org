@@ -11,6 +11,8 @@ export default function EventsListing() {
     const [categories, setCategories] = useState([])
     const [areas, setAreas] = useState([])
     const [loading, setLoading] = useState(false)
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     const area = searchParams.get("area") || ""
     const categoryId = searchParams.get("categoryId") || ""
@@ -32,18 +34,24 @@ export default function EventsListing() {
         const params = new URLSearchParams()
         if (area) params.append("area", area)
         if (categoryId) params.append("categoryId", categoryId)
+        params.append("page", page)
+        params.append("limit", 9)
 
         fetch(`${API_URL}/api/events?${params}`)
             .then(r => r.json())
-            .then(setEvents)
+            .then(data => {
+                setEvents(data.data || [])
+                setTotalPages(data.totalPages || 1)
+            })
             .finally(() => setLoading(false))
-    }, [area, categoryId])
+    }, [area, categoryId, page])
 
     const handleAreaChange = e => {
         const next = new URLSearchParams(searchParams)
         if (e.target.value) next.set("area", e.target.value)
         else next.delete("area")
         setSearchParams(next)
+        setPage(1)
     }
 
     const handleCategoryChange = e => {
@@ -51,9 +59,13 @@ export default function EventsListing() {
         if (e.target.value) next.set("categoryId", e.target.value)
         else next.delete("categoryId")
         setSearchParams(next)
+        setPage(1)
     }
 
-    const handleClear = () => setSearchParams({})
+    const handleClear = () => {
+        setSearchParams({})
+        setPage(1)
+    }
 
     return (
         <div>
@@ -83,6 +95,13 @@ export default function EventsListing() {
                     <EventCard key={event.id} event={event} />
                 ))}
             </div>
+            {totalPages > 1 && (
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center', marginTop: '1.5rem' }}>
+                    <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>← Anterior</button>
+                    <span>{page} / {totalPages}</span>
+                    <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>Siguiente →</button>
+                </div>
+            )}
         </div>
     )
 }

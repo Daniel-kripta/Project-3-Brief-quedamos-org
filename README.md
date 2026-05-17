@@ -217,7 +217,7 @@ Request
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| GET | `/api/events` | No | Listar con filtros: `?area=`, `?categoryId=`, `?from=`, `?to=` |
+| GET | `/api/events` | No | Listar con filtros: `?area=`, `?categoryId=`, `?from=`, `?to=`, `?page=`, `?limit=` (def. 9). Devuelve `{ data, total, page, totalPages }` |
 | GET | `/api/events/areas` | No | Lista de áreas con eventos |
 | GET | `/api/events/:id` | No | Detalle + count asistentes |
 | GET | `/api/events/:id/attend` | Autenticado | Comprobar si el usuario asiste |
@@ -244,8 +244,8 @@ Request
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| GET | `/api/admin/users` | ADMIN | Listar todos los users |
-| GET | `/api/admin/events` | ADMIN | Listar todos los eventos |
+| GET | `/api/admin/users` | ADMIN | Listar users paginado: `?page=`, `?limit=` (def. 10). Devuelve `{ data, total, page, totalPages }` |
+| GET | `/api/admin/events` | ADMIN | Listar eventos paginado: `?page=`, `?limit=` (def. 10). Devuelve `{ data, total, page, totalPages }` |
 | DELETE | `/api/admin/users/:id` | ADMIN | Borrar user |
 
 ---

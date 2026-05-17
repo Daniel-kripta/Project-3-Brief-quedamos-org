@@ -8,19 +8,32 @@ export default function Admin() {
     const { request, loading, error } = useApi()
     const [users, setUsers] = useState([])
     const [events, setEvents] = useState([])
+    const [userPage, setUserPage] = useState(1)
+    const [userTotalPages, setUserTotalPages] = useState(1)
+    const [eventPage, setEventPage] = useState(1)
+    const [eventTotalPages, setEventTotalPages] = useState(1)
 
     useEffect(() => {
         const token = localStorage.getItem("token")
         const headers = { Authorization: `Bearer ${token}` }
-
-        fetch(`${API_URL}/api/admin/users`, { headers })
+        fetch(`${API_URL}/api/admin/users?page=${userPage}&limit=10`, { headers })
             .then(r => r.json())
-            .then(setUsers)
+            .then(data => {
+                setUsers(data.data || [])
+                setUserTotalPages(data.totalPages || 1)
+            })
+    }, [userPage])
 
-        fetch(`${API_URL}/api/admin/events`, { headers })
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        const headers = { Authorization: `Bearer ${token}` }
+        fetch(`${API_URL}/api/admin/events?page=${eventPage}&limit=10`, { headers })
             .then(r => r.json())
-            .then(setEvents)
-    }, [])
+            .then(data => {
+                setEvents(data.data || [])
+                setEventTotalPages(data.totalPages || 1)
+            })
+    }, [eventPage])
 
     const handleDeleteUser = async (userId) => {
         if (!confirm("¿Seguro que quieres borrar esta persona usuaria?")) return
@@ -44,7 +57,7 @@ export default function Admin() {
             {error && <p>{error}</p>}
 
             <section className={styles.section}>
-                <h2>Personas usuarias ({users.length})</h2>
+                <h2>Personas usuarias ({userTotalPages > 1 ? `página ${userPage}/${userTotalPages}` : users.length})</h2>
                 <table className={styles.table}>
                     <thead>
                         <tr>
@@ -74,10 +87,17 @@ export default function Admin() {
                         ))}
                     </tbody>
                 </table>
+            {userTotalPages > 1 && (
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', margin: '1rem 0' }}>
+                    <button onClick={() => setUserPage(p => p - 1)} disabled={userPage === 1}>← Anterior</button>
+                    <span>{userPage} / {userTotalPages}</span>
+                    <button onClick={() => setUserPage(p => p + 1)} disabled={userPage === userTotalPages}>Siguiente →</button>
+                </div>
+            )}
             </section>
 
             <section className={styles.section}>
-                <h2>Eventos ({events.length})</h2>
+                <h2>Eventos ({eventTotalPages > 1 ? `página ${eventPage}/${eventTotalPages}` : events.length})</h2>
                 <table className={styles.table}>
                     <thead>
                         <tr>
@@ -110,6 +130,13 @@ export default function Admin() {
                         ))}
                     </tbody>
                 </table>
+            {eventTotalPages > 1 && (
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', margin: '1rem 0' }}>
+                    <button onClick={() => setEventPage(p => p - 1)} disabled={eventPage === 1}>← Anterior</button>
+                    <span>{eventPage} / {eventTotalPages}</span>
+                    <button onClick={() => setEventPage(p => p + 1)} disabled={eventPage === eventTotalPages}>Siguiente →</button>
+                </div>
+            )}
             </section>
         </div>
     )
