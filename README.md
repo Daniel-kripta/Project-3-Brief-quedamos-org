@@ -224,7 +224,7 @@ Request
 | POST | `/api/events` | ORGANIZER/ADMIN | Crear evento |
 | PUT | `/api/events/:id` | Propietario/ADMIN | Editar evento |
 | DELETE | `/api/events/:id` | Propietario/ADMIN | Borrar evento |
-| POST | `/api/events/:id/attend` | Autenticado | Confirmar asistencia + envía email |
+| POST | `/api/events/:id/attend` | Autenticado | Confirmar asistencia + envía email (Railway bloquea SMTP en plan gratuito; funciona en local) |
 | DELETE | `/api/events/:id/attend` | Autenticado | Cancelar asistencia |
 
 ### Categorías — `/api/categories`
