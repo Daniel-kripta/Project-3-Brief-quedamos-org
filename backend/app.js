@@ -12,6 +12,7 @@ const errorHandler = require("./middleware/errorHandler")
 
 const app = express()
 
+app.set('trust proxy', 1) // Railway sits behind a proxy; needed for rate-limit to read the real client IP
 app.use(cors())
 app.use(express.json())
 
