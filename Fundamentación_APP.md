@@ -95,7 +95,7 @@ Al confirmar asistencia, el sistema envía un email de confirmación mediante no
 
 ## Referencias
 
-- **Agencia Española de Protección de Datos.** (2022, 18 de mayo). *Dark patterns: Manipulation in Internet services*. https://www.aepd.es/en/prensa-y-comunicacion/blog/dark-patterns-manipulation-in-internet-services
+- **Agencia Española de Protección de Datos.** (2022, 18 de mayo). *Dark patterns: Manipulación en los servicios de Internet*. https://www.aepd.es/prensa-y-comunicacion/blog/dark-patterns-manipulacion-en-los-servicios-de-internet
 - **Comisión Europea, Joint Research Centre.** (2023). *The EU loneliness survey*. https://joint-research-centre.ec.europa.eu/projects-and-activities/survey-methods-and-analysis-centre/loneliness/eu-loneliness-survey_en
 - **Consejo Europeo de Protección de Datos.** (2022). *Guidelines 3/2022 on dark patterns in social media platform interfaces: How to recognise and avoid them*.
 - **Gobierno de Canarias.** (2023, 27 de noviembre). *Canarias impulsará el I Plan Integral de Mayores de Canarias y Soledad No Deseada*. https://www3.gobiernodecanarias.org/noticias/canarias-impulsara-el-i-plan-integral-de-mayores-de-canarias-y-soledad-no-deseada/
