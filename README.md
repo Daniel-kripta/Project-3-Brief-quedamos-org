@@ -194,6 +194,65 @@ Request
 
 **Tag** — etiquetas editoriales (many-to-many con Event). Distintas de `tags String[]` en Event, que son atributos funcionales con vocabulario controlado (`paid`, `free`, `indoor`, `outdoor`, `beginner_friendly`, `collaboration`).
 
+### Diagrama ERD
+
+```mermaid
+erDiagram
+    User {
+        int id PK
+        string email UK
+        string name
+        enum role "USER | ORGANIZER | ADMIN"
+        datetime createdAt
+        string[] preferredZones
+        string[] excludedZones
+        int[] preferredCategoryIds
+        int[] excludedCategoryIds
+        string[] preferredTags
+        string[] excludedTags
+    }
+    Category {
+        int id PK
+        string name UK
+        string slug UK
+        string description
+    }
+    Tag {
+        int id PK
+        string name UK
+        string slug UK
+    }
+    Event {
+        int id PK
+        string title
+        string description
+        datetime date
+        string location
+        string area
+        int maxCapacity "nullable — null = sin límite ni inscripción"
+        int minCapacity "nullable"
+        string imageUrl "nullable"
+        string[] tags "paid | free | indoor | outdoor | beginner_friendly | collaboration"
+        int categoryId FK
+        int organizerId FK
+        datetime createdAt
+        datetime registrationOpensAt "nullable"
+        datetime registrationClosesAt "nullable"
+    }
+    Attendance {
+        int id PK
+        int userId FK
+        int eventId FK
+        datetime createdAt
+    }
+
+    User ||--o{ Event : "organiza"
+    User ||--o{ Attendance : "confirma"
+    Category ||--o{ Event : "clasifica"
+    Event }o--o{ Tag : "specialTags"
+    Event ||--o{ Attendance : "recibe"
+```
+
 ### Roles
 
 | Rol | Permisos |
@@ -201,6 +260,30 @@ Request
 | `USER` | Ver eventos, confirmar/cancelar asistencia |
 | `ORGANIZER` | Todo lo de USER + crear/editar/borrar sus propios eventos |
 | `ADMIN` | Todo + editar/borrar cualquier evento + panel de administración |
+
+### Matriz de permisos por endpoint
+
+`✓` = acceso permitido · `—` = acceso denegado (401/403) · `✓ propios` = solo sobre recursos propios
+
+| Endpoint | Sin auth | USER | ORGANIZER | ADMIN |
+|----------|:--------:|:----:|:---------:|:-----:|
+| POST `/api/auth/register` | ✓ | ✓ | ✓ | ✓ |
+| POST `/api/auth/login` | ✓ | ✓ | ✓ | ✓ |
+| GET `/api/events` | ✓ | ✓ | ✓ | ✓ |
+| GET `/api/events/areas` | ✓ | ✓ | ✓ | ✓ |
+| GET `/api/events/:id` | ✓ | ✓ | ✓ | ✓ |
+| GET `/api/categories` | ✓ | ✓ | ✓ | ✓ |
+| GET `/api/events/:id/attend` | — | ✓ | ✓ | ✓ |
+| POST `/api/events/:id/attend` | — | ✓ | ✓ | ✓ |
+| DELETE `/api/events/:id/attend` | — | ✓ | ✓ | ✓ |
+| GET `/api/users/me/attendances` | — | ✓ | ✓ | ✓ |
+| GET `/api/users/me/events` | — | ✓ | ✓ | ✓ |
+| POST `/api/events` | — | — | ✓ | ✓ |
+| PUT `/api/events/:id` | — | — | ✓ propios | ✓ |
+| DELETE `/api/events/:id` | — | — | ✓ propios | ✓ |
+| GET `/api/admin/users` | — | — | — | ✓ |
+| GET `/api/admin/events` | — | — | — | ✓ |
+| DELETE `/api/admin/users/:id` | — | — | — | ✓ |
 
 ---
 
