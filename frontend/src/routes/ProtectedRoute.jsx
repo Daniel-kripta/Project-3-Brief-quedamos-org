@@ -4,11 +4,8 @@ import{useAuth} from "../context/AuthContext"
 export default function ProtectedRoute({children, roles=[]}) {
     const{ user, loading } = useAuth()
     const location = useLocation()
+    if (loading) return <div>Cargando...</div>
     if (!user) return <Navigate to="/login" state={{ from: location }} replace />
-
-    if(loading) return <div>Cargando...</div>
-    if(!user) return <Navigate to="/login" replace/>
-    if(roles.length > 0 && !roles.includes(user.role)) return <Navigate to="/" replace/>
-
+    if (roles.length > 0 && !roles.includes(user.role)) return <Navigate to="/" replace />
     return children
 }

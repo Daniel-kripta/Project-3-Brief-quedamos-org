@@ -1,5 +1,5 @@
 const prisma = require("../lib/prisma")
-const nodemailer = require('nodemailer')
+const transporter = require('../lib/mailer')
 
 
 const getEvents = async (req, res, next) => {
@@ -50,7 +50,7 @@ const getEvent = async (req, res, next) => {
                 _count: {select: {attendances: true}}
             }
         })
-        if (!event) return res.status(404).json({error: "Unfound event"})
+        if (!event) return res.status(404).json({error: "Event not found"})
         res.json(event)
         
     }
@@ -121,11 +121,12 @@ const updateEvent = async (req, res, next) => {
             minCapacity,
             imageUrl,
             categoryId,
-            tags, // TODO: si se elimina un valor de VALID_TAGS (lib/tag.js), los eventos con ese tag fallarán al actualizar
-            specialTags: { set: (specialTagIds || []).map(id => ({ id })) },
+            tags,
+            ...(specialTagIds !== undefined && { specialTags: { set: specialTagIds.map(id => ({ id })) } }),
             registrationClosesAt,
             registrationOpensAt
-        }
+        },
+        include: { category: true }
     })
     res.json(updated)
     }    catch (err) {
@@ -170,13 +171,6 @@ const attendEvent = async (req, res, next) => {
 
     // nodemailer — sin await para que el email no retrase la respuesta al cliente
     if (process.env.EMAIL_USER) {  
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-        }
-    })
 
     transporter.sendMail({
         from: process.env.EMAIL_USER,

@@ -14,7 +14,10 @@ const getMyAttendances = async (req, res, next) => {
 
 const getMyEvents = async (req, res, next) => {
     try{
-    const events = await prisma.event.findMany({ where: { organizerId: req.user.id } })
+    const events = await prisma.event.findMany({
+        where: { organizerId: req.user.id },
+        include: { category: true, _count: { select: { attendances: true } } }
+    })
     res.json(events)
     } catch (err) {
     next(err)
